@@ -19,8 +19,7 @@ class MethylSeqSlidingWindow:
         Dictionary for the current window including:
         - chromosome ('chrom')
         - chromosomal positions of CpG sites ('pos':array)
-        - methylation states of CpG site sites in each read ('meth')
-          (each read is a key in a dictionary)
+        - methylation states of CpG sites in the window for each read ('meth':dictionary)
         """
         self.window = window
         self.extractor = extractor
@@ -30,24 +29,28 @@ class MethylSeqSlidingWindow:
         return self:
 
     def __next__(self):
+        cytosines = []
+        if len(self.cytosines) == 0: self.cytosines = self.extractor.next()
         for cytosines in self.extractor: 
-            if len(self.cytosines) == 0 \
-               or in_same_window(cytosines[0],self.cytosines[0],self.window):
+            if in_same_window(cytosines[0],self.cytosines[0],self.window):
                 self.cytosines.extend(cytosines)
             else:
                 break
-        pattern = methylation_pattern(self.cytosines)
+        if len(self.cytosines) == 0: raise StopIteration
+        window = methylation_window(self.cytosines)
+        if len(cytosines) == 0: 
+            self.cytosines = deque()
         while len(self.cytosines) > 0 \
-              and not in_same_window(cytosines[0],self.cytosines[0],self.window):
+              and not in_same_window(cytosines[0],self.cytosines[0],self.window)):
             self.cytosines.popleft()
         self.cytosines.extend(cytosines)
-        return pattern
+        return window
 
 def in_same_window(cytosine1,cytosine2,window):
     return (cytosine1['chrom'] == cytosine2['chrom']) \
         and (abs(cytosine1['pos']-cytosine2['pos']) < window) 
 
-def methylation_pattern(cytosines):
+def methylation_window(cytosines):
     reads = dict()
     positions = []
     for cytosine in cytosines:

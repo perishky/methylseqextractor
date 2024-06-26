@@ -97,9 +97,9 @@ window = 200 ## base pairs
 extractor = MethylSeqExtractor(bamfn, fastafn, "chr1", 1245000, 1246000)
 
 for window in MethylSeqSlidingWindow(window,extractor):
-    start =
-	end = min(window['pos'])
-    print(window['chrom'] + ":", str(window['pos'][0]), "-", str(window['pos'][-1]))
+    start = window['pos'][0]
+	end = window['pos'][-1]
+    print(window['chrom'] + ":", str(start), "-", str(end))
 	for read in window['meth']:
 	    print(read)
 ```
