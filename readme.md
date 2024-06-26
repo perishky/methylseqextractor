@@ -5,7 +5,7 @@ and heterogeneity metrics in methyl-seq data.
 
 ## Installing dependencies
 
-```
+```{bash}
 conda config --add channels r
 conda config --add channels bioconda
 conda create -n methex python=3.8
@@ -20,25 +20,34 @@ pip3 install pandas
 Obtain the reference genome FASTA file
 and calculate an index.
 
-```
+```{bash}
 cd genome
 samtools faidx hg19.fa
 ```
 
 Index the input BAM file.
 
-```
+```{bash}
 cd data
 samtools index sample.bam
 ```
 
-## Extracting reads for all CpG sites
+## Extract reads containing specified CpG sites
 
-Prepare the environment
+Apply to just CpG sites in the region chr1:1245000-1246000
 
-
-Run the analysis
+```{python}
+from methylseqextractor import MethylSeqExtractor
+import pandas
+bamfn = "data/sample.bam"
+fastafn = "genome/hg19.fa"
+extractor = MethylSeqExtractor(bamfn, fastafn, "chr1", 1245000, 1246000)
+pandas.DataFrame([site_read for site_read in extractor])
 ```
+
+Apply to the entire genome
+
+```{bash}
 mkdir output-reads
 python extract.py \
   data/sample.bam \
@@ -46,15 +55,29 @@ python extract.py \
   output-reads/methylation_per_read
 ```
 
-Output is a csv file for each chromosome (`output/methylation_per_read_chr*.csv`)
+Output will appear in a csv file for each chromosome
+(`output/methylation_per_read_chr*.csv`)
 listing the reads that overlap each CpG site (with at least 10 reads).
-
 With 12 processors, should take about 1-2 minutes. 
 
 
-## Calculating methylation levels
+## Calculate methylation levels
 
+Calculate methylation levels in just the region chr1:1245000-1246000
+
+```{python}
+from methylseqextractor import MethylSeqExtractor
+from methylseqlevels import MethylSeqLevels
+import pandas
+bamfn = "data/sample.bam"
+fastafn = "genome/hg19.fa"
+extractor = MethylSeqExtractor(bamfn, fastafn, "chr1", 1245000, 1246000)
+pandas.DataFrame([site for site in MethylSeqLevels(extractor)])
 ```
+
+Apply across the entire genome
+
+```{bash}
 mkdir output-levels
 python calculate-levels.py \
   dat/sample.bam \
@@ -62,6 +85,24 @@ python calculate-levels.py \
   output-levels/methylation_levels
 ```
 
-## Calculating heterogeneity
+## Slide DNA methylation patterns window across the genome
+
+```{python}
+from methylseqextractor import MethylSeqExtractor
+from methylseqslidingwindow import MethylSeqSlidingWindow
+import pandas
+bamfn = "data/sample.bam"
+fastafn = "genome/hg19.fa"
+window = 200 ## base pairs
+extractor = MethylSeqExtractor(bamfn, fastafn, "chr1", 1245000, 1246000)
+
+for window in MethylSeqSlidingWindow(window,extractor):
+    start =
+	end = min(window['pos'])
+    print(window['chrom'] + ":", str(window['pos'][0]), "-", str(window['pos'][-1]))
+	for read in window['meth']:
+	    print(read)
+```
 
 
+## Calculate CAMDA scores across the genome

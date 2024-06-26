@@ -1,11 +1,12 @@
 import pysam
 import numpy
 
-class MethylseqExtractor:
+class MethylSeqExtractor:
 
     """Iterates through methyl-seq reads by CpG site"""
 
-    def __init__(self, 
+    def __init__(
+        self, 
         bamfn,
         fastafn,
         chrom,
