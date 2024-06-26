@@ -5,7 +5,7 @@ and heterogeneity metrics in methyl-seq data.
 
 ## Installing dependencies
 
-```{bash}
+```bash
 conda config --add channels r
 conda config --add channels bioconda
 conda create -n methex python=3.8
@@ -20,14 +20,14 @@ pip3 install pandas
 Obtain the reference genome FASTA file
 and calculate an index.
 
-```{bash}
+```bash
 cd genome
 samtools faidx hg19.fa
 ```
 
 Index the input BAM file.
 
-```{bash}
+```bash
 cd data
 samtools index sample.bam
 ```
@@ -36,7 +36,7 @@ samtools index sample.bam
 
 Apply to just CpG sites in the region chr1:1245000-1246000
 
-```{python}
+```python
 from methylseqextractor import MethylSeqExtractor
 import pandas
 bamfn = "data/sample.bam"
@@ -47,7 +47,7 @@ pandas.DataFrame([site_read for site_read in extractor])
 
 Apply to the entire genome
 
-```{bash}
+```bash
 mkdir output-reads
 python extract.py \
   data/sample.bam \
@@ -65,7 +65,7 @@ With 12 processors, should take about 1-2 minutes.
 
 Calculate methylation levels in just the region chr1:1245000-1246000
 
-```{python}
+```python
 from methylseqextractor import MethylSeqExtractor
 from methylseqlevels import MethylSeqLevels
 import pandas
@@ -77,7 +77,7 @@ pandas.DataFrame([site for site in MethylSeqLevels(extractor)])
 
 Apply across the entire genome
 
-```{bash}
+```bash
 mkdir output-levels
 python calculate-levels.py \
   dat/sample.bam \
@@ -87,7 +87,7 @@ python calculate-levels.py \
 
 ## Slide DNA methylation patterns window across the genome
 
-```{python}
+```python
 from methylseqextractor import MethylSeqExtractor
 from methylseqslidingwindow import MethylSeqSlidingWindow
 import pandas
