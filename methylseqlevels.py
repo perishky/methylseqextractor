@@ -1,4 +1,5 @@
-from methylseqextractor import MethylseqExtractor
+from .methylseqextractor import MethylSeqExtractor
+from .siteread import SiteRead
 
 class MethylSeqLevels: 
 
@@ -22,23 +23,23 @@ class MethylSeqLevels:
         self.extractor = extractor
 
     def __iter__(self):
-        return self:
+        return self
 
     def __next__(self):
-        site = self.extractor.next()        
+        site_reads = next(self.extractor)
         meth = 0
         unmeth = 0
-        for read in site:
-            if read['is_methylated']:
-                meth++
+        for site_read in site_reads:
+            if site_read.is_methylated():
+                meth+=1
             else:
-                unmeth++
+                unmeth+=1
         level = None
         if meth+unmeth > 0:
             level = float(meth)/float(meth+unmeth)
         return { 
-            "chrom":read['chrom'], 
-            "pos":read['pos'],
+            "chrom":site_read.get_chrom(), 
+            "pos":site_read.get_pos(),
             "meth":meth,
             "unmeth":unmeth,
             "level":level
