@@ -37,12 +37,12 @@ samtools index sample.bam
 Apply to just CpG sites in the region chr1:1245000-1246000
 
 ```python
-from methylseqextractor import MethylSeqExtractor
+from extractor import Extractor
 import pandas
 bamfn = "data/sample.bam"
 fastafn = "genome/hg19.fa"
-extractor = MethylSeqExtractor(bamfn, fastafn, "chr1", 1245000, 1246000)
-pandas.DataFrame([site_read for site_read in extractor])
+extractor = Extractor(bamfn, fastafn)
+pandas.DataFrame([site_read for site_read in extractor.iter("chr1",1245000,1246000])
 ```
 
 Apply to the entire genome
@@ -66,13 +66,13 @@ With 12 processors, should take about 1-2 minutes.
 Calculate methylation levels in just the region chr1:1245000-1246000
 
 ```python
-from methylseqextractor import MethylSeqExtractor
-from methylseqlevels import MethylSeqLevels
+from extractor import Extractor
+from levelcalculator import LevelCalculator
 import pandas
 bamfn = "data/sample.bam"
 fastafn = "genome/hg19.fa"
-extractor = MethylSeqExtractor(bamfn, fastafn, "chr1", 1245000, 1246000)
-pandas.DataFrame([site for site in MethylSeqLevels(extractor)])
+calculator = LevelCalculator(Extractor(bamfn, fastafn))
+pandas.DataFrame([site for site in calculator.iter("chr1", 1245000, 1246000)])
 ```
 
 Apply across the entire genome
@@ -88,21 +88,35 @@ python calculate-levels.py \
 ## Slide DNA methylation patterns window across the genome
 
 ```python
-from methylseqextractor import MethylSeqExtractor
-from methylseqslidingwindow import MethylSeqSlidingWindow
+from extractor import Extractor
+from windowslider import WindowSlider
+from windowmaker import WindowMaker
 import pandas
 bamfn = "data/sample.bam"
 fastafn = "genome/hg19.fa"
-window = 200 ## base pairs
-extractor = MethylSeqExtractor(bamfn, fastafn, "chr1", 1245000, 1246000)
+size = 200 ## base pairs
+slider = WindowSlider(WindowMaker(size), Extractor(bamfn, fastafn))
 
-for window in MethylSeqSlidingWindow(window,extractor):
-    start = window['pos'][0]
-    end = window['pos'][-1]
+for window in slider.iter("chr1", 1245000, 1246000):
+    start = window['positions'][0]
+    end = window['positions'][-1]
     print(window['chrom'] + ":", str(start), "-", str(end))
     for read in window['meth']:
         print(read)
 ```
 
 
-## Calculate CAMDA scores across the genome
+## Calculate clonal flip scores
+
+```
+from extractor import Extractor
+from windowslider import WindowSlider
+from windowmaker import WindowMaker
+import pandas
+bamfn = "data/sample.bam"
+fastafn = "genome/hg19.fa"
+size = 200 ## base pairs
+counter = ClonalFlipCounter(WindowSlider(WindowMaker(size), Extractor(bamfn, fastafn)))
+
+pandas.DataFrame([site for site in counter.iter("chr1", 1245000, 1246000)])
+```

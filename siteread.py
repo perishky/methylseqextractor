@@ -1,6 +1,7 @@
 import pysam
+import numpy
 
-class SiteRead:
+class SiteRead (dict):
     """
         - name: read query name  
         - first: is the first in a pair of reads 
@@ -19,41 +20,41 @@ class SiteRead:
         assert isinstance(read, pysam.PileupRead)
         self.read = read
         align = read.alignment
-        self.info = {
-            "name":align.query_name,
-            "first":align.is_read1,
-            "chrom":align.reference_name,
-            "pos":align.reference_start + read.query_position,
-            "strand":("+" if is_fwd else "-"),
-            "cstrand":get_conversion_strand(read),
-            "base":align.query_sequence[read.query_position].upper()
-            "mapq":align.mapping_quality,
-            "readq":numpy.mean(align.query_qualities),
-            "baseq":align.query_qualities[read.query_position],
-            "is_methylated":call=methylation_call(read)=="m"
-        }
+        super().__init__(
+            name=align.query_name,
+            first=align.is_read1,
+            chrom=align.reference_name,
+            pos=align.get_reference_positions(full_length=True)[read.query_position],
+            strand=("+" if is_fwd else "-"),
+            cstrand=get_conversion_strand(read),
+            base=align.query_sequence[read.query_position].upper(),
+            mapq=align.mapping_quality,
+            readq=numpy.mean(align.query_qualities),
+            baseq=align.query_qualities[read.query_position],
+            is_methylated=(methylation_call(read)=="m"))
 
-    def get_name(self): return self.info['name']
-    def get_chrom(self): return self.info['chrom']
+    def get_name(self): return self['name']
+    def get_chrom(self): return self['chrom']
     def get_pos(self,merge_strands=False):
-        if self.info.strand == "+" or not merge_strands:
-            return self.info['pos']
+        if self['strand'] == "+" or not merge_strands:
+            return self['pos']
         else:
-            return self.info['pos'] - 1
-    def is_methylated(self): return self.info['is_methylated']
+            return self['pos'] - 1
+    def get_baseq(self): return self['baseq']
+    def is_methylated(self): return self['is_methylated']
     def is_strand_consistent(self):
-        return ((self.info['strand'] == "+") \
-                and (self.conversion_strand() in['OT','CTOT'])) \
-            of ((self.info['strand'] == "-") \
-                and (self.conversion_strand() in['OB','CTOB']))
+        return ((self['strand'] == "+") \
+                and (self['cstrand'] in['OT','CTOT'])) \
+            or ((self['strand'] == "-") \
+                and (self['cstrand'] in['OB','CTOB']))
 
     def is_good(self,params):
         return not (self.read.is_del or self.read.is_refskip) \
             and self.read.alignment.is_proper_pair \
-            and self.info['mapq'] > params['min_mapq'] \
-            and self.info['mapq'] != 255 \
-            and self.info['readq'] > params['min_read_quality'] \
-            and self.info['baseq'] > params['min_base_quality'] \
+            and self['mapq'] > params['min_mapq'] \
+            and self['mapq'] != 255 \
+            and self['readq'] > params['min_read_quality'] \
+            and self['baseq'] > params['min_base_quality'] \
             and self.is_strand_consistent() \
             and not self.is_methylated() is None
 

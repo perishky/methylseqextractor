@@ -1,7 +1,7 @@
-from .methylseqextractor import MethylSeqExtractor
+from .extractor import Extractor, ExtractionIterator
 from .siteread import SiteRead
 
-class MethylSeqLevels: 
+class LevelCalculator: 
 
     """Iterates through CpG sites and calculates DNAm levels"""
 
@@ -20,13 +20,23 @@ class MethylSeqLevels:
         - number of unmethylated cytosines ('unmeth')
         - methylation level ('level')
         """
+        assert isinstance(extractor, Extractor)
         self.extractor = extractor
+
+    def iter(self, chrom, start=0, end=None):
+        return LevelIterator(self.extractor.iter(chrom,start,end))
+
+class LevelIterator:
+
+    def __init__(self, iterator):
+        assert isinstance(iterator, ExtractionIterator)
+        self.iterator = iterator
 
     def __iter__(self):
         return self
 
     def __next__(self):
-        site_reads = next(self.extractor)
+        site_reads = next(self.iterator)
         meth = 0
         unmeth = 0
         for site_read in site_reads:
@@ -44,3 +54,4 @@ class MethylSeqLevels:
             "unmeth":unmeth,
             "level":level
         }
+            

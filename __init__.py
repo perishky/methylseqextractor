@@ -1,5 +1,6 @@
-from .methylseqextractor import MethylSeqExtractor
-from .methylseqlevels import MethylSeqLevels
-from .methylseqslidingwindow import MethylSeqSlidingWindow
-from .methylationwindow import MethylationWindow
-form .siteread import SiteRead
+from .extractor import Extractor, ExtractionIterator
+from .levelcalculator import LevelCalculator, LevelIterator
+from .windowslider import WindowSlider, WindowIterator
+from .windowmaker import WindowMaker, Window
+from .clonalflipcounter import ClonalFlipCounter, ClonalFlipCountIterator
+from .siteread import SiteRead
