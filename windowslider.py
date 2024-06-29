@@ -1,5 +1,5 @@
 from .extractor import Extractor, ExtractionIterator
-from .windowmaker import WindowMaker, Window
+from .window import WindowMaker, Window
 from .siteread import SiteRead
 
 class WindowSlider: 

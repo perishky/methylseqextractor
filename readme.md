@@ -32,91 +32,85 @@ cd data
 samtools index sample.bam
 ```
 
-## Extract reads containing specified CpG sites
+## Analysis in python
 
-Apply to just CpG sites in the region chr1:1245000-1246000
+### Import methylseqextractor modules
 
 ```python
-from extractor import Extractor
+from methylseqextractor import (
+    Extractor, 
+    WindowMaker, 
+    LevelCalculator, 
+    WindowSlider, 
+    ClonalFlipCounter,
+    ConcurrenceCalculator
+)
+```
+
+We'll also use `pandas` for data frames.
+```python
 import pandas
+```
+
+### Extract reads containing specified CpG sites
+
+Extract reads overlapping CpG sites in the region chr1:1245000-1246000
+
+```python
 bamfn = "data/sample.bam"
 fastafn = "genome/hg19.fa"
 extractor = Extractor(bamfn, fastafn)
 pandas.DataFrame([site_read for site_read in extractor.iter("chr1",1245000,1246000])
 ```
 
-Apply to the entire genome
+### Calculate DNA methylation levels
 
-```bash
-mkdir output-reads
-python extract.py \
-  data/sample.bam \
-  genome/hg19.fa \
-  output-reads/methylation_per_read
-```
-
-Output will appear in a csv file for each chromosome
-(`output/methylation_per_read_chr*.csv`)
-listing the reads that overlap each CpG site (with at least 10 reads).
-With 12 processors, should take about 1-2 minutes. 
-
-
-## Calculate methylation levels
-
-Calculate methylation levels in just the region chr1:1245000-1246000
+Calculate DNA methylation levels in just the region chr1:1245000-1246000
 
 ```python
-from extractor import Extractor
-from levelcalculator import LevelCalculator
-import pandas
-bamfn = "data/sample.bam"
-fastafn = "genome/hg19.fa"
-calculator = LevelCalculator(Extractor(bamfn, fastafn))
-pandas.DataFrame([site for site in calculator.iter("chr1", 1245000, 1246000)])
+levelcalculator = LevelCalculator(extractor)
+pandas.DataFrame([site for site in levelcalculator.iter("chr1", 1245000, 1246000)])
 ```
 
-Apply across the entire genome
-
-```bash
-mkdir output-levels
-python calculate-levels.py \
-  dat/sample.bam \
-  genome/hg19.fa \
-  output-levels/methylation_levels
-```
-
-## Slide DNA methylation patterns window across the genome
+## Slide window across the genome to view DNA methylation patterns
 
 ```python
-from extractor import Extractor
-from windowslider import WindowSlider
-from windowmaker import WindowMaker
-import pandas
-bamfn = "data/sample.bam"
-fastafn = "genome/hg19.fa"
-size = 200 ## base pairs
-slider = WindowSlider(WindowMaker(size), Extractor(bamfn, fastafn))
-
-for window in slider.iter("chr1", 1245000, 1246000):
-    start = window['positions'][0]
-    end = window['positions'][-1]
-    print(window['chrom'] + ":", str(start), "-", str(end))
-    for read in window['meth']:
-        print(read)
+slider = WindowSlider(WindowMaker(50))
+for region in slider.iter("chr1", 1245000, 1246000):
+  print(region)
 ```
 
+## Count clonal flips
 
-## Calculate clonal flip scores
-
-```
-from extractor import Extractor
-from windowslider import WindowSlider
-from windowmaker import WindowMaker
-import pandas
-bamfn = "data/sample.bam"
-fastafn = "genome/hg19.fa"
-size = 200 ## base pairs
-counter = ClonalFlipCounter(WindowSlider(WindowMaker(size), Extractor(bamfn, fastafn)))
-
+```python
+counter = ClonalFlipCounter(slider)
 pandas.DataFrame([site for site in counter.iter("chr1", 1245000, 1246000)])
+```
+
+## Calculate concurrence scores
+
+```python
+concurrencecalculator = ConcurrenceCalculator(slider)
+pandas.DataFrame([site for site in concurrencecalculator.iter("chr1", 1245000, 1246000)])
+```
+
+## Analysing the entire genome
+
+Outputs are likely to get large and computationally more costly
+when generated for the entire genome.
+Forutnately, these analyses are naturally parallalizable
+by chromosome using the `multiprocessing`library.
+
+```python
+import multiprocessing
+
+def calculate_chrom_concurrences(chrom):
+  regions = concurrencecalculator.iter(chrom)
+  return pd.DataFrame([region for region in regions])
+
+chromosomes = ["chr"+str(i) for i in range(1,23)] + ["chrX"]
+
+with multiprocessing.Pool(processes=12) as pool:
+  for stats in pool.imap(calculate_chrom_concurrences, chromosomes):
+    dat.to_csv("clonalflipcounts_" + stats['chrom'][0] + ".csv")
 ```

@@ -48,12 +48,12 @@ class ClonalFlipCountIterator:
                     "chrom": pattern["chrom"],
                     "start": pattern["positions"][0],
                     "end": pattern["positions"][-1],
-                    "sites": len(pattern["positions"]),
-                    "flips":flips, 
-                    "possible": possible,
-                    "ratio": float(flips)/float(possible),
-                    "meth": meth,
-                    "unmeth": unmeth,
-                    "level": float(meth)/float(meth+unmeth)
+                    "nsites": len(pattern["positions"]),
+                    "nflips":flips, 
+                    "npossible": possible,
+                    "flip_pct": flips/float(possible),
+                    "nmeth": meth,
+                    "nunmeth": unmeth,
+                    "meth_pct": meth/float(meth+unmeth)
                 }
         raise StopIteration
