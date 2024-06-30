@@ -1,0 +1,180 @@
+---
+title: "Example using methylseqextractor"
+format:
+  html:
+    code-fold: false
+    toc: true
+    self-contained: true
+jupyter: python3
+---
+
+This document illustrates how to use all functionality 
+of 'methylseqextractor' 
+[https://github.com/perishky/methylseqextractor](https://github.com/perishky/methylseqextractor).
+
+## Import methylseqextractor modules
+
+All necessary modules can be imported as follows:
+
+```{python}
+#| eval: false
+from methylseqextractor import (
+    Extractor, 
+    WindowMaker, 
+    LevelCalculator, 
+    WindowSlider, 
+    ClonalFlipCounter,
+    ConcurrenceCalculator
+)
+```
+
+```{python}
+#| echo: false
+from src import (
+    Extractor, 
+    WindowMaker, 
+    LevelCalculator, 
+    WindowSlider, 
+    ClonalFlipCounter,
+    ConcurrenceCalculator
+)
+```
+
+
+In the examples below, we'll use `pandas` to
+store outputs as data frames.
+
+```{python}
+import pandas
+```
+
+## Extract reads containing specified CpG sites
+
+We can extract the reads overlapping each of a selected set of CpG sites. 
+
+Here we prepare to extract reads overlapping CpG sites in the 
+region chr1:1245000-1246000.
+
+```{python}
+bamfn = "data/sample.bam"
+fastafn = "genome/hg19.fa"
+extractor = Extractor(bamfn, fastafn)
+iter = extractor.iter("chr1",1245000,1246000)
+```
+
+Each step of this iterator will return the reads of a different CpG site. 
+Here are the reads for the first CpG site. 
+
+```{python}
+site_reads = pandas.DataFrame(next(iter))
+site_reads
+```
+
+## Calculate DNA methylation levels
+
+A variety of summary statistics can be calculated from these read sets. 
+
+One is the proportion of reads in which a CpG site is methylated 
+
+Here we calculate DNA methylation levels for each CpG site 
+in the region chr1:1245000-1246000.
+
+```{python}
+levelcalculator = LevelCalculator(extractor)
+iter = levelcalculator.iter("chr1", 1245000, 1246000)
+levels = pandas.DataFrame([site for site in iter])
+```
+
+Here are the DNA methylation levels for the first 5
+of the `python len(levels)` sites in the region.
+
+```{python}
+levels[0:5]
+```
+
+## View DNA methylation patterns
+
+These read sets can also be simplified to just 
+retrieve the DNA methylation patterns within 
+a window of specified size as it 'slides' across the genome.
+
+Here we show the DNA methylation patterns 
+for 200 bp window at its first two window positions.
+
+```{python}
+slider = WindowSlider(WindowMaker(200), extractor)
+iter = slider.iter("chr1", 1245000, 1246000)
+print(next(iter)) ## first window position
+print(next(iter)) ## second window position
+```
+
+## Count clonal flips
+
+From these DNA methylation patterns, we can calculate
+how DNA methylation varies within and between reads. 
+There are a variety of such metrics. 
+
+One metric calculates the number of times the DNA methylation 
+of CpG sites changes as one moves from one end of a 
+DNA fragment (corresponding to a read pair) to the other. 
+
+```{python}
+counter = ClonalFlipCounter(slider)
+iter = counter.iter("chr1", 1245000, 1246000)
+flips = pandas.DataFrame([ region for region in iter])
+```
+
+Here we show these counts for the first 5 window positions.
+
+```{python}
+flips[0:5]
+```
+
+## Calculate concurrence scores
+
+We can similarly calculate DNA methylation concurrence scores, 
+i.e. in a given window, 
+the proportion of unmethylated CpG sites in a read with at least
+one methylated CpG site relative to the set of all CpG sites 
+in all reads.
+
+**Note:** this is different from the published 'CAMDA' score
+which performs these calculations across entire reads rather than 
+just within the window. We restrict the calculation to the window
+to avoid an overdependence of the calculated statistics on read length.
+
+Here we use the `slider` definition from above, so the window size 
+is 200 bp and show the scores for the first 5 window positions.
+
+```{python}
+concurrencecalculator = ConcurrenceCalculator(slider)
+iter = concurrencecalculator.iter("chr1", 1245000, 1246000)
+scores = pandas.DataFrame([site for site in iter])
+scores[0:5]
+```
+
+## Analysing the entire genome efficiently using multiple processors
+
+Outputs are likely to get large and computationally more costly
+when generated for the entire genome rather than just a single region.
+Fortunately, these analyses are naturally parallalizable
+by chromosome using the `multiprocessing`library.
+
+For example, here we count DNA methylation 'flip' statistics 
+chromosome-by-chromosome and save the results to CSV files.
+
+```{python}
+#| eval: false
+
+import multiprocessing
+
+def calculate_chrom_concurrences(chrom):
+  regions = concurrencecalculator.iter(chrom)
+  return pandas.DataFrame([region for region in regions])
+
+chromosomes = ["chr"+str(i) for i in range(1,23)] + ["chrX"]
+
+with multiprocessing.Pool(processes=12) as pool:
+  for stats in pool.imap(calculate_chrom_concurrences, chromosomes):
+    dat.to_csv("clonalflipcounts_" + stats['chrom'][0] + ".csv")
+```

@@ -1,6 +1,7 @@
 # methylseqextractor
 
-A tool allowing the flexible calculation of concordance
+A tool allowing the flexible calculation of
+DNA methylation concordance
 and heterogeneity metrics in methyl-seq data.
 
 ## Installing dependencies
@@ -16,101 +17,40 @@ pip3 install pandas
 
 ## Preparing the data
 
-
-Obtain the reference genome FASTA file
-and calculate an index.
-
-```bash
-cd genome
-samtools faidx hg19.fa
-```
-
-Index the input BAM file.
+Each analysis is applied to a single sorted and indexed BAM file.
+If necessary, a BAM file can be sorted and indexed using samtools, e.g.
 
 ```bash
-cd data
+samtools sort sample_unsorted.bam -o sample.bam
 samtools index sample.bam
 ```
 
-## Analysis in python
+All analyses require the reference genome sequence
+in an indexed FASTA file.
 
-### Import methylseqextractor modules
+If necessary, a FASTA file can be indexed using samtools.
 
-```python
-from methylseqextractor import (
-    Extractor, 
-    WindowMaker, 
-    LevelCalculator, 
-    WindowSlider, 
-    ClonalFlipCounter,
-    ConcurrenceCalculator
-)
+```bash
+samtools faidx hg19.fa
 ```
 
-We'll also use `pandas` for data frames.
-```python
-import pandas
+## Running analyses
+
+See [example.html](example.html) for an example
+as well as instructions for how to make use of multiple processors
+for efficient genome-wide analyses. 
+
+## Generating example.html
+
+Generating example output file `example.html` from `example.qmd`
+uses the `jupyter` Python package. It can be installed as follows.
+
+```bash
+pip3 install jupyter
 ```
 
-### Extract reads containing specified CpG sites
+The output can be generated using 'quarto'. 
 
-Extract reads overlapping CpG sites in the region chr1:1245000-1246000
-
-```python
-bamfn = "data/sample.bam"
-fastafn = "genome/hg19.fa"
-extractor = Extractor(bamfn, fastafn)
-pandas.DataFrame([site_read for site_read in extractor.iter("chr1",1245000,1246000])
-```
-
-### Calculate DNA methylation levels
-
-Calculate DNA methylation levels in just the region chr1:1245000-1246000
-
-```python
-levelcalculator = LevelCalculator(extractor)
-pandas.DataFrame([site for site in levelcalculator.iter("chr1", 1245000, 1246000)])
-```
-
-## Slide window across the genome to view DNA methylation patterns
-
-```python
-slider = WindowSlider(WindowMaker(50))
-for region in slider.iter("chr1", 1245000, 1246000):
-  print(region)
-```
-
-## Count clonal flips
-
-```python
-counter = ClonalFlipCounter(slider)
-pandas.DataFrame([site for site in counter.iter("chr1", 1245000, 1246000)])
-```
-
-## Calculate concurrence scores
-
-```python
-concurrencecalculator = ConcurrenceCalculator(slider)
-pandas.DataFrame([site for site in concurrencecalculator.iter("chr1", 1245000, 1246000)])
-```
-
-## Analysing the entire genome
-
-Outputs are likely to get large and computationally more costly
-when generated for the entire genome.
-Forutnately, these analyses are naturally parallalizable
-by chromosome using the `multiprocessing`library.
-
-```python
-import multiprocessing
-
-def calculate_chrom_concurrences(chrom):
-  regions = concurrencecalculator.iter(chrom)
-  return pd.DataFrame([region for region in regions])
-
-chromosomes = ["chr"+str(i) for i in range(1,23)] + ["chrX"]
-
-with multiprocessing.Pool(processes=12) as pool:
-  for stats in pool.imap(calculate_chrom_concurrences, chromosomes):
-    dat.to_csv("clonalflipcounts_" + stats['chrom'][0] + ".csv")
+```bash
+quarto render example.qmd
 ```
