@@ -62,7 +62,7 @@ class Window:
         -------
         DNA methylation pattern in the current window view including:
         - chrom: chromosome
-        - pos: chromosomal positions of CpG sites 
+        - positions: chromosomal positions of CpG sites 
         - reads: names of reads overlapping the window 
         - meth: matrix of methylation states of CpG sites
           in the window (columns) for each read (rows)
@@ -87,28 +87,28 @@ class Window:
         return Pattern(
             chrom=self.chrom, 
             positions=positions, 
-            reads=meth_by_read.keys(), 
+            reads=[name for name in meth_by_read.keys()],
             meth=[x for x in meth_by_read.values()]
         )
 
-class Pattern (dict):
+class Pattern:
     def __init__(self,chrom,positions,reads,meth):
+        assert isinstance(reads,list)
+        assert isinstance(meth,list)
         assert len(reads) == len(meth)
         assert len(positions) == len(meth[0])
-        super().__init__(
-            chrom=chrom,
-            positions=positions,
-            reads=reads,
-            meth=meth
-        )
+        self.chrom=chrom
+        self.positions=positions
+        self.reads=reads
+        self.meth=meth
 
     def __str__(self):
-        meth = self['meth']
+        meth = self.meth
         meth = [["" if m < 0 else str(m) for m in clone] for clone in meth]
         df = pd.DataFrame(meth)
-        df.insert(0,"read",self['reads'])
-        out = ("chrom = " + self['chrom'] 
-                + " positions = " + str(self['positions']) + "\n" 
+        df.insert(0,"read",self.reads)
+        out = ("chrom = " + self.chrom 
+                + " positions = " + str(self.positions) + "\n" 
                 +  df.to_string(header=False,index=False))
         return out
     

@@ -24,6 +24,7 @@ from methylseqextractor import (
     LevelCalculator, 
     WindowSlider, 
     ClonalFlipCounter,
+    CAMDACalculator,
     ConcurrenceCalculator
 )
 ```
@@ -36,6 +37,7 @@ from src import (
     LevelCalculator, 
     WindowSlider, 
     ClonalFlipCounter,
+    CAMDACalculator,
     ConcurrenceCalculator
 )
 ```
@@ -86,7 +88,7 @@ levels = pandas.DataFrame([site for site in iter])
 ```
 
 Here are the DNA methylation levels for the first 5
-of the `python len(levels)` sites in the region.
+of the sites in the region.
 
 ```{python}
 levels[0:5]
@@ -130,6 +132,28 @@ Here we show these counts for the first 5 window positions.
 flips[0:5]
 ```
 
+## Calculate CAMDA scores 
+
+The aim of **Concurrence of Active Methylation and De-methylAtion (CAMDA)**
+scores is to identify genomic regions where DNA methylation-modifying 
+enzymes are active.  These regions are assumed to be those 
+with many partially methylated reads. 
+
+The original implementation can be found here:
+[https://github.com/JiejunShi/CAMDA](https://github.com/JiejunShi/CAMDA).
+
+The approach is illustrated below with an example:
+
+![CAMDA Schematic](https://raw.githubusercontent.com/JiejunShi/CAMDA/master/images/CAMDA_schematic.png)
+
+
+```{python}
+camdacalculator = CAMDACalculator(250,extractor)
+iter = camdacalculator.iter("chr1", 1245000, 1246000)
+scores = pandas.DataFrame([site for site in iter])
+scores[0:5]
+```
+
 ## Calculate concurrence scores
 
 We can similarly calculate DNA methylation concurrence scores, 
@@ -139,8 +163,9 @@ one methylated CpG site relative to the set of all CpG sites
 in all reads.
 
 **Note:** this is different from the published 'CAMDA' score
-which performs these calculations across entire reads rather than 
-just within the window. We restrict the calculation to the window
+calculated above which performs these calculations across 
+entire reads rather than just within the window. 
+We restrict the calculation to the window
 to avoid an overdependence of the calculated statistics on read length.
 
 Here we use the `slider` definition from above, so the window size 

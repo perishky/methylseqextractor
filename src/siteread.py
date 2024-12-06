@@ -35,6 +35,7 @@ class SiteRead (dict):
 
     def get_name(self): return self['name']
     def get_chrom(self): return self['chrom']
+    def get_strand(self): return self['strand']
     def get_pos(self,merge_strands=False):
         if self['strand'] == "+" or not merge_strands:
             return self['pos']

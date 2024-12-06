@@ -11,7 +11,8 @@ class ClonalFlipCounter:
         self.slider = slider
 
     def iter(self, chrom, start=0, end=None):
-        return ClonalFlipCountIterator(self.slider.iter(chrom,start,end))
+        slider = self.slider.iter(chrom,start,end)
+        return ClonalFlipCountIterator(slider)
 
 class ClonalFlipCountIterator:
 
@@ -31,7 +32,7 @@ class ClonalFlipCountIterator:
             flips = 0
             meth = 0
             unmeth = 0
-            for clone in pattern["meth"]:
+            for clone in pattern.meth:
                 prev_state = None
                 for cpg_state in clone:
                     if cpg_state >= 0:
@@ -45,10 +46,10 @@ class ClonalFlipCountIterator:
                         prev_state = cpg_state
             if possible > 0:
                 return { 
-                    "chrom": pattern["chrom"],
-                    "start": pattern["positions"][0],
-                    "end": pattern["positions"][-1],
-                    "nsites": len(pattern["positions"]),
+                    "chrom": pattern.chrom,
+                    "start": pattern.positions[0],
+                    "end": pattern.positions[-1],
+                    "nsites": len(pattern.positions),
                     "nflips":flips, 
                     "npossible": possible,
                     "flip_pct": flips/float(possible),

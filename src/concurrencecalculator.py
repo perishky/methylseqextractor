@@ -33,7 +33,7 @@ class ConcurrenceIterator:
             unmeth = 0
             concurrence_clones = 0
             clones = 0
-            for clone in pattern["meth"]:
+            for clone in pattern.meth:
                 clone_meth = 0
                 clone_unmeth = 0
                 for cpg_state in clone:
@@ -53,10 +53,10 @@ class ConcurrenceIterator:
                     clones += 1
             if meth + unmeth > 0:
                 return { 
-                    "chrom": pattern["chrom"],
-                    "start": pattern["positions"][0],
-                    "end": pattern["positions"][-1],
-                    "nsites": len(pattern["positions"]),
+                    "chrom": pattern.chrom,
+                    "start": pattern.positions[0],
+                    "end": pattern.positions[-1],
+                    "nsites": len(pattern.positions),
                     "nconcurrence":concurrence, 
                     "ncytosines":meth+unmeth,
                     "concurrence": concurrence/float(meth+unmeth),

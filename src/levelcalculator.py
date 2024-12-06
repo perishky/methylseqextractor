@@ -50,6 +50,7 @@ class LevelIterator:
         return { 
             "chrom":site_read.get_chrom(), 
             "pos":site_read.get_pos(),
+            "strand":site_read.get_strand(),
             "nmeth":meth,
             "nunmeth":unmeth,
             "meth_pct":level

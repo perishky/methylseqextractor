@@ -43,7 +43,8 @@ for efficient genome-wide analyses.
 ## Generating example.html
 
 Generating example output file `example.html` from `example.qmd`
-uses the `jupyter` Python package. It can be installed as follows.
+uses the `jupyter` Python package.
+It can be installed as follows.
 
 ```bash
 pip3 install jupyter
