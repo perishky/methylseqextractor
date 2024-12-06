@@ -101,13 +101,12 @@ retrieve the DNA methylation patterns within
 a window of specified size as it 'slides' across the genome.
 
 Here we show the DNA methylation patterns 
-for 200 bp window at its first two window positions.
+for the entire 1000 bp region.
 
 ```{python}
-slider = WindowSlider(WindowMaker(200), extractor)
+slider = WindowSlider(WindowMaker(1000), extractor)
 iter = slider.iter("chr1", 1245000, 1246000)
-print(next(iter)) ## first window position
-print(next(iter)) ## second window position
+print(next(iter)) 
 ```
 
 ## Count clonal flips
@@ -200,6 +199,7 @@ def calculate_chrom_concurrences(chrom):
 chromosomes = ["chr"+str(i) for i in range(1,23)] + ["chrX"]
 
 with multiprocessing.Pool(processes=12) as pool:
-  for stats in pool.imap(calculate_chrom_concurrences, chromosomes):
-    dat.to_csv("clonalflipcounts_" + stats['chrom'][0] + ".csv")
+    for stats in pool.imap(calculate_chrom_concurrences, chromosomes):
+        if len(stats) > 0:
+            stats.to_csv("clonalflipcounts_" + stats['chrom'][0] + ".csv")
 ```

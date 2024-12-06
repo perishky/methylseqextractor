@@ -50,8 +50,27 @@ It can be installed as follows.
 pip3 install jupyter
 ```
 
-The output can be generated using 'quarto'. 
+The code assumes the existence of `data/sample.bam` containing sequencing reads. 
+A small example file was used to the generate `example.html`.
+It was obtained from a real bam file (called `original.bam`)
+but down-sampled to simplify the output.
+
+```bash
+mkdir data
+cd data
+## if necessary, install samtools
+conda install bioconda::samtools
+## select reads from just chromosome 1
+samtools view -bo chr1.bam original.bam chr1
+## randomly retain 10% of the reads
+samtools view -b -s 0.1 chr1.bam > sample.bam
+## index the resulting file
+samtools index sample.bam
+```
+
+The output file `example.html` can be generated using 'quarto'. 
 
 ```bash
 quarto render example.qmd
 ```
+

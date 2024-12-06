@@ -31,7 +31,9 @@ class CpGIterator:
     def __init__(self, slider,chrom, start, end):
         assert isinstance(slider, WindowSlider)
         self.size = slider.windowmaker.size
-        self.iterator = slider.iter(chrom,start-self.size//2,end+self.size//2)
+        region_start = start-self.size//2
+        region_end = end+self.size//2 if not end is None else None
+        self.iterator = slider.iter(chrom,region_start,region_end)
         self.chrom = chrom
         self.start = start
         self.end = end
@@ -55,7 +57,7 @@ class CpGIterator:
             if self.current < self.pattern.positions[i]:
                 self.current = self.pattern.positions[i]
                 break
-        if self.current > self.end \
+        if not self.end is None and self.current > self.end \
            or self.current > self.pattern.positions[-1]:
             self.pattern = None
             raise StopIteration

@@ -60,7 +60,7 @@ class ExtractionIterator:
             if column.nsegments < self.seq_params['min_depth']: continue
             pos = column.reference_pos
             if pos < self.start: continue
-            if pos > self.end: break
+            if not self.end is None and pos > self.end: break
             if self.fastafile.fetch(self.chrom,pos,pos+2).upper() == "CG":
                 site_reads = extract(column,True,self.seq_params)
             elif pos > 0 and self.fastafile.fetch(self.chrom,pos-1,pos+1).upper() == "CG":
