@@ -145,6 +145,8 @@ The approach is illustrated below with an example:
 
 ![CAMDA Schematic](https://raw.githubusercontent.com/JiejunShi/CAMDA/master/images/CAMDA_schematic.png)
 
+Input to the CAMDA calculator is 'max_fragment' 
+which represents the largest expected sequenced DNA fragment.  
 
 ```{python}
 camdacalculator = CAMDACalculator(250,extractor)
