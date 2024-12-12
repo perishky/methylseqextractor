@@ -1,6 +1,9 @@
 from .windowslider import WindowIterator, WindowSlider
 from .window import Pattern
 
+import pandas as pd
+
+
 class CpGWindowSlider: 
 
     """

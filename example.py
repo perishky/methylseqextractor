@@ -56,7 +56,7 @@ flips[0:5]
 
 ## Calculate CAMDA scores 
 
-camdacalculator = CAMDACalculator(250,extractor)
+camdacalculator = CAMDACalculator(500,250,extractor)
 iter = camdacalculator.iter("chr1", 1245000, 1246000)
 scores = pandas.DataFrame([site for site in iter])
 

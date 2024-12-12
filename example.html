@@ -2687,6 +2687,8 @@ vertical-align: -.125em;
       <th>name</th>
       <th>first</th>
       <th>chrom</th>
+      <th>start</th>
+      <th>end</th>
       <th>pos</th>
       <th>strand</th>
       <th>cstrand</th>
@@ -2703,6 +2705,8 @@ vertical-align: -.125em;
       <td>M04360:9:000000000-LH9RH:1:2109:6257:10400</td>
       <td>False</td>
       <td>chr1</td>
+      <td>1245035</td>
+      <td>1245285</td>
       <td>1245146</td>
       <td>+</td>
       <td>OT</td>
@@ -2717,6 +2721,8 @@ vertical-align: -.125em;
       <td>M04360:9:000000000-LH9RH:1:1108:22978:8011</td>
       <td>False</td>
       <td>chr1</td>
+      <td>1245037</td>
+      <td>1245287</td>
       <td>1245146</td>
       <td>+</td>
       <td>OT</td>
@@ -2731,6 +2737,8 @@ vertical-align: -.125em;
       <td>M04360:9:000000000-LH9RH:1:2108:13140:14703</td>
       <td>False</td>
       <td>chr1</td>
+      <td>1245041</td>
+      <td>1245291</td>
       <td>1245146</td>
       <td>+</td>
       <td>OT</td>
@@ -2745,6 +2753,8 @@ vertical-align: -.125em;
       <td>M04360:9:000000000-LH9RH:1:1104:27291:19899</td>
       <td>True</td>
       <td>chr1</td>
+      <td>1245068</td>
+      <td>1245319</td>
       <td>1245146</td>
       <td>+</td>
       <td>OT</td>
@@ -2759,6 +2769,8 @@ vertical-align: -.125em;
       <td>M04360:9:000000000-LH9RH:1:2109:8720:15145</td>
       <td>True</td>
       <td>chr1</td>
+      <td>1245079</td>
+      <td>1245329</td>
       <td>1245146</td>
       <td>+</td>
       <td>OT</td>
@@ -2773,6 +2785,8 @@ vertical-align: -.125em;
       <td>M04360:9:000000000-LH9RH:1:1113:21933:16063</td>
       <td>True</td>
       <td>chr1</td>
+      <td>1245100</td>
+      <td>1245266</td>
       <td>1245146</td>
       <td>+</td>
       <td>OT</td>
@@ -2787,6 +2801,8 @@ vertical-align: -.125em;
       <td>M04360:9:000000000-LH9RH:1:1113:21659:4980</td>
       <td>False</td>
       <td>chr1</td>
+      <td>1245123</td>
+      <td>1245267</td>
       <td>1245146</td>
       <td>+</td>
       <td>OT</td>
@@ -2801,6 +2817,8 @@ vertical-align: -.125em;
       <td>M04360:9:000000000-LH9RH:1:2105:9102:26149</td>
       <td>True</td>
       <td>chr1</td>
+      <td>1245125</td>
+      <td>1245373</td>
       <td>1245146</td>
       <td>+</td>
       <td>OT</td>
@@ -2815,6 +2833,8 @@ vertical-align: -.125em;
       <td>M04360:9:000000000-LH9RH:1:1101:14153:6435</td>
       <td>False</td>
       <td>chr1</td>
+      <td>1245134</td>
+      <td>1245381</td>
       <td>1245146</td>
       <td>+</td>
       <td>OT</td>
@@ -2829,6 +2849,8 @@ vertical-align: -.125em;
       <td>M04360:9:000000000-LH9RH:1:1106:16059:21370</td>
       <td>True</td>
       <td>chr1</td>
+      <td>1245136</td>
+      <td>1245257</td>
       <td>1245146</td>
       <td>+</td>
       <td>OT</td>
@@ -2843,6 +2865,8 @@ vertical-align: -.125em;
       <td>M04360:9:000000000-LH9RH:1:1103:25962:11196</td>
       <td>True</td>
       <td>chr1</td>
+      <td>1245142</td>
+      <td>1245278</td>
       <td>1245146</td>
       <td>+</td>
       <td>OT</td>
@@ -2858,6 +2882,8 @@ vertical-align: -.125em;
       <td>True</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>1245259</td>
+      <td>1245146</td>
       <td>+</td>
       <td>OT</td>
       <td>C</td>
@@ -2871,6 +2897,8 @@ vertical-align: -.125em;
       <td>M04360:9:000000000-LH9RH:1:2106:26111:14092</td>
       <td>False</td>
       <td>chr1</td>
+      <td>1245146</td>
+      <td>1245370</td>
       <td>1245146</td>
       <td>+</td>
       <td>OT</td>
@@ -3077,12 +3105,15 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
 <p></p><figcaption class="figure-caption">CAMDA Schematic</figcaption><p></p>
 </figure>
 </div>
-<p>Input to the CAMDA calculator is ‘max_fragment’ which represents the largest expected sequenced DNA fragment.</p>
+<p>Not shown in the figure is the fact that CAMDA scores can be calculated for individual CpG sites (i.e. the proportion of times a CpG site is a concurrence site) or for regions of a given size (i.e. the proportion of times CpG sites in a region are concurrence sites).</p>
+<p>Input to the CAMDA calculator are ‘region_size’ (the size of the CpG-centered region for the CAMDA score) and ‘max_read_length’ (the longest expected read length).</p>
 <div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>camdacalculator <span class="op">=</span> CAMDACalculator(<span class="dv">250</span>,extractor)</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> camdacalculator.<span class="bu">iter</span>(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> pandas.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>scores[<span class="dv">0</span>:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>region_size <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>max_read_length <span class="op">=</span> <span class="dv">250</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>camdacalculator <span class="op">=</span> CAMDACalculator(region_size,max_read_length,extractor)</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> camdacalculator.<span class="bu">iter</span>(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> pandas.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>scores[<span class="dv">0</span>:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
 
 <div>
@@ -3104,8 +3135,8 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
       <th>0</th>
       <td>chr1</td>
       <td>1245146</td>
-      <td>157</td>
-      <td>0.165605</td>
+      <td>13</td>
+      <td>0.076923</td>
       <td>13</td>
       <td>0.692308</td>
     </tr>
@@ -3113,8 +3144,8 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
       <th>1</th>
       <td>chr1</td>
       <td>1245152</td>
-      <td>157</td>
-      <td>0.165605</td>
+      <td>13</td>
+      <td>0.230769</td>
       <td>13</td>
       <td>0.692308</td>
     </tr>
@@ -3122,8 +3153,8 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
       <th>2</th>
       <td>chr1</td>
       <td>1245159</td>
-      <td>167</td>
-      <td>0.161677</td>
+      <td>14</td>
+      <td>0.285714</td>
       <td>14</td>
       <td>0.714286</td>
     </tr>
@@ -3131,8 +3162,8 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
       <th>3</th>
       <td>chr1</td>
       <td>1245163</td>
-      <td>167</td>
-      <td>0.161677</td>
+      <td>14</td>
+      <td>0.142857</td>
       <td>14</td>
       <td>0.714286</td>
     </tr>
@@ -3140,8 +3171,8 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
       <th>4</th>
       <td>chr1</td>
       <td>1245167</td>
-      <td>175</td>
-      <td>0.160000</td>
+      <td>15</td>
+      <td>0.133333</td>
       <td>15</td>
       <td>0.733333</td>
     </tr>

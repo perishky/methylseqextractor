@@ -6,6 +6,8 @@ class SiteRead (dict):
         - name: read query name  
         - first: is the first in a pair of reads 
         - chrom: chromosome
+        - start: chromosomal position of read start
+        - end: chromosomal position of the read end
         - pos: chromosomal position of the CpG site (0-based)
         - base: sequenced base 
         - strand: forward or reverse strand
@@ -24,6 +26,8 @@ class SiteRead (dict):
             name=align.query_name,
             first=align.is_read1,
             chrom=align.reference_name,
+            start=align.reference_start,
+            end=align.reference_end,
             pos=align.get_reference_positions(full_length=True)[read.query_position],
             strand=("+" if is_fwd else "-"),
             cstrand=get_conversion_strand(read),
@@ -36,6 +40,8 @@ class SiteRead (dict):
     def get_name(self): return self['name']
     def get_chrom(self): return self['chrom']
     def get_strand(self): return self['strand']
+    def get_read_start(self): return self['start']
+    def get_read_end(self): return self['end']
     def get_pos(self,merge_strands=False):
         if self['strand'] == "+" or not merge_strands:
             return self['pos']

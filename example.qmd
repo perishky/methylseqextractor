@@ -145,11 +145,18 @@ The approach is illustrated below with an example:
 
 ![CAMDA Schematic](https://raw.githubusercontent.com/JiejunShi/CAMDA/master/images/CAMDA_schematic.png)
 
-Input to the CAMDA calculator is 'max_fragment' 
-which represents the largest expected sequenced DNA fragment.  
+Not shown in the figure is the fact that CAMDA scores can be calculated for individual CpG sites
+(i.e. the proportion of times a CpG site is a concurrence site)
+or for regions of a given size
+(i.e. the proportion of times CpG sites in a region are concurrence sites).
+
+Input to the CAMDA calculator are 'region_size' (the size of the CpG-centered region for the CAMDA score)
+and 'max_read_length' (the longest expected read length).
 
 ```{python}
-camdacalculator = CAMDACalculator(250,extractor)
+region_size = 1 ## calculate concurrence for individual CpG sites
+max_read_length = 250
+camdacalculator = CAMDACalculator(region_size,max_read_length,extractor)
 iter = camdacalculator.iter("chr1", 1245000, 1246000)
 scores = pandas.DataFrame([site for site in iter])
 scores[0:5]
