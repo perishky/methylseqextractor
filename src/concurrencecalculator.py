@@ -62,7 +62,7 @@ class ConcurrenceIterator:
                     "concurrence": concurrence/float(meth+unmeth),
                     "nconcurrence_clones":concurrence_clones,
                     "nclones":clones,
-                    "weighted_concurrence":concurrence_clones/float(clones),
+                    "unweighted_concurrence":concurrence_clones/float(clones),
                     "nmeth": meth,
                     "nunmeth": unmeth,
                     "meth_pct": float(meth)/float(concurrence+meth+unmeth)
