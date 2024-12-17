@@ -78,6 +78,6 @@ class CAMDAIterator:
                     "ncytosines":number_cytosines,
                     "camda": concurrence_cytosines/float(number_cytosines),
                     "nclones":number_clones,
-                    "weighted_camda":concurrence_clones/float(number_clones)
+                    "unweighted_camda":concurrence_clones/float(number_clones)
                 }
         raise StopIteration
