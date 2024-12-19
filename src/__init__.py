@@ -1,9 +1,8 @@
-from .extractor import Extractor, ExtractionIterator
-from .levelcalculator import LevelCalculator, LevelIterator
-from .windowslider import WindowSlider, WindowIterator
-from .cpgslider import CpGWindowSlider, CpGIterator
-from .window import WindowMaker, Window
-from .clonalflipcounter import ClonalFlipCounter, ClonalFlipCountIterator
-from .concurrencecalculator import ConcurrenceCalculator, ConcurrenceIterator
-from .camdacalculator import CAMDACalculator, CAMDAIterator
-from .siteread import SiteRead
+from .methylseqdataset import MethylSeqDataset
+from .window import Window, WindowView
+from .levelcalculator import LevelCalculator
+from .clonalflipcounter import ClonalFlipCounter
+from .concurrencecalculator import ConcurrenceCalculator
+from .camdacalculator import CAMDACalculator
+from .cytosineread import CytosineRead
+from .read import Read

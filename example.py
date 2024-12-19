@@ -1,23 +1,19 @@
 ## exec(open("example.py").read())
 
 # from methylseqextractor import (
-#     Extractor, 
-#     WindowMaker, 
-#     LevelCalculator, 
-#     WindowSlider, 
-#     ClonalFlipCounter,
-#     CAMDACalculator,
-#     ConcurrenceCalculator
+#   MethylSeqDataset,
+#   LevelCalculator,
+#   ClonalFlipCounter,
+#   ConcurrenceCalculator,
+#   CAMDACalculator
 # )
 
 from src import (
-    Extractor, 
-    WindowMaker, 
-    LevelCalculator, 
-    WindowSlider, 
-    ClonalFlipCounter,
-    CAMDACalculator,
-    ConcurrenceCalculator
+  MethylSeqDataset,
+  LevelCalculator,
+  ClonalFlipCounter,
+  ConcurrenceCalculator,
+  CAMDACalculator
 )
 
 import pandas
@@ -26,15 +22,15 @@ import pandas
 
 bamfn = "data/sample.bam"
 fastafn = "genome/hg19.fa"
-extractor = Extractor(bamfn, fastafn)
-iter = extractor.iter("chr1",1245000,1246000)
+dataset = MethylSeqDataset(bamfn, fastafn)
+iter = dataset.iter("chr1",1245000,1246000)
 
-site_reads = pandas.DataFrame(next(iter))
-site_reads
+c_reads = pandas.DataFrame(next(iter))
+c_reads
 
 ## Calculate DNA methylation levels
 
-levelcalculator = LevelCalculator(extractor)
+levelcalculator = LevelCalculator(dataset)
 iter = levelcalculator.iter("chr1", 1245000, 1246000)
 levels = pandas.DataFrame([site for site in iter])
 
@@ -42,7 +38,7 @@ levels[0:5]
 
 ## View DNA methylation patterns
 
-slider = WindowSlider(WindowMaker(1000), extractor)
+slider = WindowSlider(WindowMaker(1000), dataset)
 iter = slider.iter("chr1", 1245000, 1246000)
 print(next(iter)) ## first window position
  
@@ -55,8 +51,9 @@ flips = pandas.DataFrame([ region for region in iter])
 flips[0:5]
 
 ## Calculate CAMDA scores 
-
-camdacalculator = CAMDACalculator(500,250,extractor)
+region_size = 1 ## calculate concurrence for individual CpG sites
+max_read_length = 250
+camdacalculator = CAMDACalculator(region_size,max_read_length,dataset)
 iter = camdacalculator.iter("chr1", 1245000, 1246000)
 scores = pandas.DataFrame([site for site in iter])
 

@@ -1,96 +1,67 @@
 from collections import deque 
 import pandas as pd
 
-from .pattern import Pattern
-
-class WindowMaker:
-    def __init__(self,size,merge_strands=True):
-        self.size = size
-        self.merge_strands = merge_strands
-
-    def new_window(self):
-        return Window(self.size,self.merge_strands)
+from .methylseqdataset import MethylSeqDataset
 
 class Window:
-    def __init__(self,size,merge_strands=True):
+    def __init__(self,dataset,size):
+        assert isinstance(dataset,MethylSeqDataset)
+        self.dataset = dataset
         self.size = size
-        self.merge_strands = merge_strands
-        self.site_reads = deque()
-        self.chrom = None
-        self.start = None
-        self.end = None
 
-    def is_empty(self):
-        return len(self.site_reads) == 0
-
-    def wipe(self):
-        self.site_reads = deque()
-
-    def add(self,site_read):
-        chrom = site_read.get_chrom()
-        pos = site_read.get_pos(self.merge_strands)
-        if len(self.site_reads) == 0:
-            self.chrom = chrom
-            self.start = pos
-            self.end = pos
-            self.site_reads.append(site_read)
-            return True
-        if chrom == self.chrom \
-           and self.end <= pos and pos <= self.start + self.size:
-            self.end = pos
-            self.site_reads.append(site_read)
-            return True
-        return False
-
-    def slide(self,site_read):
-        if len(self.site_reads) == 0:
-            self.add(site_read)
-        chrom = site_read.get_chrom()
-        pos = site_read.get_pos(self.merge_strands)
-        assert chrom != self.chrom or pos >= self.end
-        if chrom != self.chrom:
-            self.site_reads = deque()
-            self.chrom = chrom
-            self.start = pos
-        self.site_reads.append(site_read)
-        self.end = pos
-        while pos >= self.start + self.size:
-            self.site_reads.popleft()
-            self.start = self.site_reads[0].get_pos(self.merge_strands)
+    def slide(self,chrom,start=0,end=None):
+        reads = deque()
+        positions = deque()
+        iterator = self.dataset.methylation(chrom,start,end)
+        snap_start = start
+        snap_end = start + self.size
+        for column in iterator:
+            pos = column[0].pos
+            if pos > snap_end:
+                yield WindowView(chrom,snap_start,snap_end,positions,reads)
+                snap_end = pos
+                snap_start = snap_end - self.size
+                while len(positions) > 0:
+                    if positions[0] < snap_start:
+                        positions.popleft()
+                while len(reads) > 0:
+                    if reads[0].end < snap_start:
+                        reads.popleft()
+            positions.add(pos)
+            for cread in column:
+                if cread.read.creads[0].pos == pos: 
+                    reads.add(cread.read)
+        if len(reads) > 0:
+            yield WindowView(chrom,snap_start,snap_end,positions,reads)
         
-    def get_pattern(self):
-        """
-        Returns
-        -------
-        DNA methylation pattern in the current window view including:
-        - chrom: chromosome
-        - positions: chromosomal positions of CpG sites 
-        - reads: names of reads overlapping the window 
-        - meth: matrix of methylation states of CpG sites
-          in the window (columns) for each read (rows)
-        """
-        positions = []
-        for site_read in self.site_reads:
-            pos = site_read.get_pos(self.merge_strands)
-            if len(positions) == 0 or positions[-1] != pos:
-                positions.append(pos)
-        meth_by_read = dict()
-        for site_read in self.site_reads:
-            name = site_read.get_name()
-            if not name in meth_by_read:
-                meth_by_read[name] = [-1]*len(positions)
-        idx = 0
-        for site_read in self.site_reads:
-            name = site_read.get_name()
-            pos = site_read.get_pos(self.merge_strands)
-            status = 1 if site_read.is_methylated() else 0
-            while positions[idx] < pos: idx += 1
-            meth_by_read[name][idx] = status
-        return Pattern(
-            chrom=self.chrom, 
-            positions=positions, 
-            reads=[name for name in meth_by_read.keys()],
-            meth=[x for x in meth_by_read.values()]
-        )
+class WindowView:
 
-    
+    def __init__(self,chrom,start,end,positions,reads):
+        self.chrom = chrom
+        self.start = start
+        self.end = end
+        self.positions = positions
+        self.reads = reads
+
+    def get_reads(self): 
+        return [read for read in self.reads \
+                if read.end >= self.start and read.start <= self.end]
+
+    def get_positions(self):
+        return [pos for pos in positions \
+                if pos >= self.start and pos <= self.end]
+
+    def __str__(self):
+        positions = self.get_positions()
+        reads = self.get_reads()
+        meth = []
+        for read in reads:
+            read_meth = [""]*len(positions)
+            for cread in read.get_creads(self):
+                read_meth[positions.index[cread.pos]] = "1" if cread.is_methylated else "0"
+            meth += [read_meth]
+        meth = pd.DataFrame(meth)
+        meth.insert(0,"read",reads)
+        return ("positions = \n " + "\n ".join(str(self.get_positions())) 
+                + "\nmeth=\n" +  meth.to_string(header=False,index=False))
+        
