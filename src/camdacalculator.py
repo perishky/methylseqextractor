@@ -74,15 +74,15 @@ class CAMDAWindow:
         self.dataset = dataset
 
     def slide(self,chrom,start=0,end=None):
-        iterator = dataset.methylation(chrom,start,end)
+        iterator = self.dataset.methylation(chrom,start,end)
         columns = deque()
         current_idx = -1
         next_column = None
         try:
-            columns = next(iterator)
+            columns.append(next(iterator))
             next_column = next(iterator)
         except StopIteration:
-            if len(columns) = 0:
+            if len(columns) == 0:
                 return
         for column in iterator:
             current_idx += 1 ## current position = columns[current_idx][0].pos
@@ -90,14 +90,14 @@ class CAMDAWindow:
             end = max([cread.read.end for cread in columns[current_idx]])
             ## add columns with cytosines in reads covering the current position
             while not next_column is None and next_column[0].pos <= end:
-                columns.add(next_column)
+                columns.append(next_column)
                 try:
                     next_column = next(iterator)
                 except StopIteration:
                     next_column = None
                     break
             ## remove columns for cytosines not in any reads covering the current position
-            while columns[0].pos < start:
+            while columns[0][0].pos < start:
                 columns.popleft()
                 current_idx -= 1
                 if len(columns) == 0:

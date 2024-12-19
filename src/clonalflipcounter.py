@@ -8,14 +8,14 @@ class ClonalFlipCounter:
         self.window = Window(dataset,size)
 
     def calculate(self,chrom,start=0,end=None):
-        for view in window.slide(chrom,start,end):
+        for view in self.window.slide(chrom,start,end):
             meth = 0
             unmeth = 0
             possible = 0
             flips = 0
             for read in view.get_reads():
                 prev_methylated = None
-                for cread in read.get_creads(view):
+                for cread in read.get_creads(view.start,view.end):
                     if cread.is_methylated: 
                         meth += 1
                     else:

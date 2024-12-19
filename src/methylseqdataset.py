@@ -24,16 +24,16 @@ class MethylSeqDataset:
         min_depth: minimum read depth (default: 10)
         """
         self.bamfile = pysam.AlignmentFile(bamfn,"rb")
-        self.fastafile = pysam.FastaFile(fastfn)
+        self.fastafile = pysam.FastaFile(fastafn)
         self.min_mapq=min_mapq 
         self.min_read_quality=min_read_quality
         self.min_base_quality=min_base_quality
         self.min_depth=min_depth
 
-    def methylation(chrom,start=0,end=None):
+    def methylation(self,chrom,start=0,end=None):
         previous_column = {}        
         columns = self.bamfile.pileup(chrom, start, end, ignore_overlaps=True)
-        for column in self.columns:
+        for column in columns:
             if column.nsegments < self.min_depth: continue
             pos = column.reference_pos
             if pos < start: continue
@@ -61,18 +61,18 @@ class MethylSeqDataset:
                         read_end = site_read_end(site_read)
                         readq = site_read_quality(site_read)
                         read = Read(name,chrom,read_start,read_end,strand,readq)
-                        current[read.name] = read
                     cread = CytosineRead(read,chrom,pos,base,baseq,is_methylated)
-                    read.cread.add(cread)
+                    read.creads.append(cread)
+                    current[read.name] = cread
                 previous_column = current
-                yield current                    
+                yield list(current.values())
                 
     def extract_site_reads(self,column,is_fwd):
         site_reads = dict()
         for site_read in column.pileups:
             if site_read.is_del or site_read.is_refskip:
                 continue
-            if not self.is_good_site_read(site_read): 
+            if not self.is_good_site_read(site_read,is_fwd): 
                 continue
             previous = site_reads.get(site_read_name(site_read))
             if not previous is None:
@@ -81,19 +81,19 @@ class MethylSeqDataset:
                 if previous_baseq > current_baseq:
                     continue
             site_reads[site_read.alignment.query_name] = site_read
-        if len(site_reads) < self.min_depth
+        if len(site_reads) < self.min_depth:
             return {}
         return site_reads
 
-    def is_good_site_read(self,site_read):
+    def is_good_site_read(self,site_read,is_fwd):
         assert isinstance(site_read, pysam.PileupRead)
         return not (site_read.is_del or site_read.is_refskip) \
             and site_read.alignment.is_proper_pair \
-            and site_read_quality(read) > self.min_mapq \
-            and site_read_quality(read) != 255 \
+            and site_read_quality(site_read) > self.min_mapq \
+            and site_read_quality(site_read) != 255 \
             and site_read_quality(site_read) > self.min_read_quality \
             and site_read_base_quality(site_read) > self.min_base_quality \
-            and is_strand_consistent(site_read) \
+            and is_strand_consistent(site_read,is_fwd) \
             and not site_read_methylation_call(site_read) is None
 
 def site_read_name(site_read):
@@ -136,7 +136,7 @@ def site_read_methylation_call(site_read):
     assert isinstance(site_read, pysam.PileupRead)
     ## C code from MethylDackel converted to python
     base = site_read.alignment.query_sequence[site_read.query_position].upper()
-    cstrand = get_conversion_strand(site_read)
+    cstrand = site_read_conversion_strand(site_read)
     if (cstrand=="OT") or (cstrand=="CTOT"):
         if base=="C": 
             return "m"
@@ -182,7 +182,7 @@ def site_read_conversion_strand(site_read):
             elif (align.flag & 0x91) == 0x81: return "OB"  ## read2 + 
             elif (align.flag & 0x91) == 0x91: return "CTOB"## read2 - 
             elif (align.flag & 0x10): return "OB"          ## single - 
- return "CTOB"                                             ## single +
+            return "CTOB"                                  ## single +
 
 def site_read_is_methylated(site_read):
     assert isinstance(site_read, pysam.PileupRead)
@@ -191,6 +191,6 @@ def site_read_is_methylated(site_read):
 def is_strand_consistent(site_read,is_fwd):
     assert isinstance(site_read, pysam.PileupRead)
     cstrand = site_read_conversion_strand(site_read)
-    return is_fwd and (cstrand in ['OT','CTOT'])) \
-        or not is_fwd and (cstrand in ['OB','CTOB']))
+    return is_fwd and (cstrand in ['OT','CTOT']) \
+        or not is_fwd and (cstrand in ['OB','CTOB'])
 

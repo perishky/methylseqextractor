@@ -57,7 +57,7 @@ region chr1:1245000-1246000.
 bamfn = "data/sample.bam"
 fastafn = "genome/hg19.fa"
 dataset = MethylSeqDataset(bamfn, fastafn)
-iter = dataset.iter("chr1",1245000,1246000)
+iter = dataset.methylation("chr1",1245000,1246000)
 ```
 
 Each step of this iterator will return the reads of a different CpG site. 

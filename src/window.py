@@ -18,20 +18,25 @@ class Window:
         for column in iterator:
             pos = column[0].pos
             if pos > snap_end:
-                yield WindowView(chrom,snap_start,snap_end,positions,reads)
+                if len(positions) > 0:
+                    yield WindowView(chrom,snap_start,snap_end,positions,reads)
                 snap_end = pos
                 snap_start = snap_end - self.size
                 while len(positions) > 0:
                     if positions[0] < snap_start:
                         positions.popleft()
+                    else:
+                        break
                 while len(reads) > 0:
                     if reads[0].end < snap_start:
                         reads.popleft()
-            positions.add(pos)
+                    else:
+                        break
+            positions.append(pos)
             for cread in column:
                 if cread.read.creads[0].pos == pos: 
-                    reads.add(cread.read)
-        if len(reads) > 0:
+                    reads.append(cread.read)
+        if len(positions) > 0:
             yield WindowView(chrom,snap_start,snap_end,positions,reads)
         
 class WindowView:
@@ -48,7 +53,7 @@ class WindowView:
                 if read.end >= self.start and read.start <= self.end]
 
     def get_positions(self):
-        return [pos for pos in positions \
+        return [pos for pos in self.positions \
                 if pos >= self.start and pos <= self.end]
 
     def __str__(self):
@@ -57,11 +62,11 @@ class WindowView:
         meth = []
         for read in reads:
             read_meth = [""]*len(positions)
-            for cread in read.get_creads(self):
-                read_meth[positions.index[cread.pos]] = "1" if cread.is_methylated else "0"
+            for cread in read.get_creads(self.start,self.end):
+                read_meth[positions.index(cread.pos)] = "1" if cread.is_methylated else "0"
             meth += [read_meth]
         meth = pd.DataFrame(meth)
-        meth.insert(0,"read",reads)
-        return ("positions = \n " + "\n ".join(str(self.get_positions())) 
+        meth.insert(0,"read",[read.name for read in reads])
+        return ("positions = \n " + "\n ".join([str(pos) for pos in positions])
                 + "\nmeth=\n" +  meth.to_string(header=False,index=False))
         

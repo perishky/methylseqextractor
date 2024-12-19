@@ -3,12 +3,12 @@ from .window import Window
 
 class ConcurrenceCalculator:
 
-    def __init__(self,datset,size):
+    def __init__(self,dataset,size):
         assert isinstance(dataset,MethylSeqDataset)
         self.window = Window(dataset,size)
 
     def calculate(self,chrom,start=0,end=None):
-        for view in window.slide(chrom,start,end):
+        for view in self.window.slide(chrom,start,end):
             concurrence = 0
             meth = 0
             unmeth = 0
@@ -17,7 +17,7 @@ class ConcurrenceCalculator:
             for read in view.get_reads():
                 clone_meth = 0
                 clone_unmeth = 0
-                for cread in read.get_creads(view):
+                for cread in read.get_creads(view.start,view.end):
                     if cread.is_methylated:
                         clone_meth += 1
                     else:
