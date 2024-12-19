@@ -19,26 +19,22 @@ All necessary modules can be imported as follows:
 ```{python}
 #| eval: false
 from methylseqextractor import (
-    Extractor, 
-    WindowMaker, 
-    LevelCalculator, 
-    WindowSlider, 
-    ClonalFlipCounter,
-    CAMDACalculator,
-    ConcurrenceCalculator
+  MethylSeqDataset,
+  LevelCalculator,
+  ClonalFlipCounter,
+  ConcurrenceCalculator,
+  CAMDACalculator
 )
 ```
 
 ```{python}
 #| echo: false
 from src import (
-    Extractor, 
-    WindowMaker, 
-    LevelCalculator, 
-    WindowSlider, 
-    ClonalFlipCounter,
-    CAMDACalculator,
-    ConcurrenceCalculator
+  MethylSeqDataset,
+  LevelCalculator,
+  ClonalFlipCounter,
+  ConcurrenceCalculator,
+  CAMDACalculator
 )
 ```
 
@@ -60,16 +56,15 @@ region chr1:1245000-1246000.
 ```{python}
 bamfn = "data/sample.bam"
 fastafn = "genome/hg19.fa"
-extractor = Extractor(bamfn, fastafn)
-iter = extractor.iter("chr1",1245000,1246000)
+dataset = MethylSeqDataset(bamfn, fastafn)
+iter = dataset.iter("chr1",1245000,1246000)
 ```
 
 Each step of this iterator will return the reads of a different CpG site. 
 Here are the reads for the first CpG site. 
 
 ```{python}
-site_reads = pandas.DataFrame(next(iter))
-site_reads
+pandas.DataFrame(next(iter))
 ```
 
 ## Calculate DNA methylation levels
@@ -82,16 +77,16 @@ Here we calculate DNA methylation levels for each CpG site
 in the region chr1:1245000-1246000.
 
 ```{python}
-levelcalculator = LevelCalculator(extractor)
-iter = levelcalculator.iter("chr1", 1245000, 1246000)
-levels = pandas.DataFrame([site for site in iter])
+levels = LevelCalculator(dataset)
+iter = levels.calculate("chr1", 1245000, 1246000)
+scores = pandas.DataFrame([site for site in iter])
 ```
 
 Here are the DNA methylation levels for the first 5
 of the sites in the region.
 
 ```{python}
-levels[0:5]
+scores[0:5]
 ```
 
 ## View DNA methylation patterns
@@ -104,9 +99,9 @@ Here we show the DNA methylation patterns
 for the entire 1000 bp region.
 
 ```{python}
-slider = WindowSlider(WindowMaker(1000), extractor)
-iter = slider.iter("chr1", 1245000, 1246000)
-print(next(iter)) 
+window = Window(dataset,1000)
+iter = window.slide("chr1", 1245000, 1246000)
+print(next(iter)) ## first window position
 ```
 
 ## Count clonal flips
@@ -120,15 +115,15 @@ of CpG sites changes as one moves from one end of a
 DNA fragment (corresponding to a read pair) to the other. 
 
 ```{python}
-counter = ClonalFlipCounter(slider)
-iter = counter.iter("chr1", 1245000, 1246000)
-flips = pandas.DataFrame([ region for region in iter])
+flips = ClonalFlipCounter(dataset,1000)
+iter = flips.calculate("chr1", 1245000, 1246000)
+scores = pandas.DataFrame([ region for region in iter])
 ```
 
 Here we show these counts for the first 5 window positions.
 
 ```{python}
-flips[0:5]
+scores[0:5]
 ```
 
 ## Calculate CAMDA scores 
@@ -150,14 +145,12 @@ Not shown in the figure is the fact that CAMDA scores can be calculated for indi
 or for regions of a given size
 (i.e. the proportion of times CpG sites in a region are concurrence sites).
 
-Input to the CAMDA calculator are 'region_size' (the size of the CpG-centered region for the CAMDA score)
-and 'max_read_length' (the longest expected read length).
+The 'size' argument to `CAMDACalculator`
+sets the size of the CpG-centered region for the CAMDA score.
 
 ```{python}
-region_size = 1 ## calculate concurrence for individual CpG sites
-max_read_length = 250
-camdacalculator = CAMDACalculator(region_size,max_read_length,extractor)
-iter = camdacalculator.iter("chr1", 1245000, 1246000)
+camda = CAMDACalculator(dataset, 1)
+iter = camda.calculate("chr1", 1245000, 1246000)
 scores = pandas.DataFrame([site for site in iter])
 scores[0:5]
 ```
@@ -180,9 +173,9 @@ Here we use the `slider` definition from above, so the window size
 is 200 bp and show the scores for the first 5 window positions.
 
 ```{python}
-concurrencecalculator = ConcurrenceCalculator(slider)
-iter = concurrencecalculator.iter("chr1", 1245000, 1246000)
-scores = pandas.DataFrame([site for site in iter])
+concurrence = ConcurrenceCalculator(dataset,1000)
+iter = concurrence.calculate("chr1", 1245000, 1246000)
+scores = pandas.DataFrame([region for region in iter])
 scores[0:5]
 ```
 
@@ -202,8 +195,8 @@ chromosome-by-chromosome and save the results to CSV files.
 import multiprocessing
 
 def calculate_chrom_concurrences(chrom):
-  regions = concurrencecalculator.iter(chrom)
-  return pandas.DataFrame([region for region in regions])
+  iter = concurrence.calculate(chrom)
+  return pandas.DataFrame([region for region in iter])
 
 chromosomes = ["chr"+str(i) for i in range(1,23)] + ["chrX"]
 

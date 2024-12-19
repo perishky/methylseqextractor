@@ -5,13 +5,14 @@ from .read import Read
 
 class MethylSeqDataset:
     def __init__(
-        self, 
-        bamfn,
-        fastafn,
-        min_mapq=10, 
-        min_read_quality=5,
-        min_base_quality=5,
-        min_depth=10):
+            self, 
+            bamfn,
+            fastafn,
+            min_mapq=10, 
+            min_read_quality=5,
+            min_base_quality=5,
+            min_depth=10
+    ):
         """
         Parameters
         ----------

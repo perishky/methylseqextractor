@@ -5,17 +5,21 @@ from .methylseqdataset import MethylSeqDataset
 
 class CAMDACalculator:
 
-    def __init__(
-        self,
-        size,
-        dataset
-    ):
+    def __init__(self,dataset,size):
         assert isinstance(dataset, MethylSeqDataset)
+        self.dataset = dataset
         self.window = CAMDAWindow(dataset)
         self.size = size
 
     def calculate(self,chrom,start=0,end=None):
-        for column in self.window.slide(chrom,start,end):
+        column = next(self.dataset.methylation(chrom,start,end))
+        virtual_start = start
+        for cread in column:
+            if cread.read.start < virtual_start:
+                virtual_start = cread.read.start
+        for column in self.window.slide(chrom,virtual_start,end):
+            if column[0].pos < start:
+                continue
             concurrence_cytosines = 0
             meth = 0
             unmeth = 0

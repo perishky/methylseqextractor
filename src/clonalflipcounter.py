@@ -3,11 +3,7 @@ from .window import Window
 
 class ClonalFlipCounter:
 
-    def __init__(
-        self,
-        dataset,
-        size
-    ):
+    def __init__(self,dataset,size):
         assert isinstance(dataset,MethylSeqDataset)
         self.window = Window(dataset,size)
 
