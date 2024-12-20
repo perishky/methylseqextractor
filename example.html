@@ -2648,18 +2648,17 @@ vertical-align: -.125em;
 <p>All necessary modules can be imported as follows:</p>
 <div class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> methylseqextractor <span class="im">import</span> (</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    Extractor, </span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    WindowMaker, </span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    LevelCalculator, </span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    WindowSlider, </span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    ClonalFlipCounter,</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>    CAMDACalculator,</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    ConcurrenceCalculator</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  Window,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  MethylSeqDataset,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>  LevelCalculator,</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>  ClonalFlipCounter,</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>  ConcurrenceCalculator,</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  CAMDACalculator</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>In the examples below, we’ll use <code>pandas</code> to store outputs as data frames.</p>
 <div class="cell" data-execution_count="3">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="extract-reads-containing-specified-cpg-sites" class="level2">
@@ -2669,14 +2668,14 @@ vertical-align: -.125em;
 <div class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>bamfn <span class="op">=</span> <span class="st">&quot;data/sample.bam&quot;</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>fastafn <span class="op">=</span> <span class="st">&quot;genome/hg19.fa&quot;</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>extractor <span class="op">=</span> Extractor(bamfn, fastafn)</span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> extractor.<span class="bu">iter</span>(<span class="st">&quot;chr1&quot;</span>,<span class="dv">1245000</span>,<span class="dv">1246000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> MethylSeqDataset(bamfn, fastafn)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> dataset.methylation(<span class="st">&quot;chr1&quot;</span>,<span class="dv">1245000</span>,<span class="dv">1246000</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Each step of this iterator will return the reads of a different CpG site. Here are the reads for the first CpG site.</p>
 <div class="cell" data-execution_count="5">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>site_reads <span class="op">=</span> pandas.DataFrame(<span class="bu">next</span>(<span class="bu">iter</span>))</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>site_reads</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sites <span class="op">=</span> <span class="bu">next</span>(<span class="bu">iter</span>)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site.get_dict() <span class="cf">for</span> site <span class="kw">in</span> sites])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="15">
 
 <div>
 
@@ -2684,18 +2683,10 @@ vertical-align: -.125em;
   <thead>
     <tr>
       <th></th>
-      <th>name</th>
-      <th>first</th>
+      <th>read</th>
       <th>chrom</th>
-      <th>start</th>
-      <th>end</th>
       <th>pos</th>
-      <th>strand</th>
-      <th>cstrand</th>
       <th>base</th>
-      <th>mapq</th>
-      <th>readq</th>
-      <th>baseq</th>
       <th>is_methylated</th>
     </tr>
   </thead>
@@ -2703,209 +2694,234 @@ vertical-align: -.125em;
     <tr>
       <th>0</th>
       <td>M04360:9:000000000-LH9RH:1:2109:6257:10400</td>
-      <td>False</td>
       <td>chr1</td>
-      <td>1245035</td>
-      <td>1245285</td>
       <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>C</td>
-      <td>60</td>
-      <td>34.008000</td>
-      <td>38</td>
       <td>True</td>
     </tr>
     <tr>
       <th>1</th>
       <td>M04360:9:000000000-LH9RH:1:1108:22978:8011</td>
-      <td>False</td>
       <td>chr1</td>
-      <td>1245037</td>
-      <td>1245287</td>
       <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>C</td>
-      <td>60</td>
-      <td>45.812000</td>
-      <td>53</td>
       <td>True</td>
     </tr>
     <tr>
       <th>2</th>
       <td>M04360:9:000000000-LH9RH:1:2108:13140:14703</td>
-      <td>False</td>
       <td>chr1</td>
-      <td>1245041</td>
-      <td>1245291</td>
       <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>T</td>
-      <td>60</td>
-      <td>27.128000</td>
-      <td>38</td>
       <td>False</td>
     </tr>
     <tr>
       <th>3</th>
       <td>M04360:9:000000000-LH9RH:1:1104:27291:19899</td>
-      <td>True</td>
       <td>chr1</td>
-      <td>1245068</td>
-      <td>1245319</td>
       <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>C</td>
-      <td>60</td>
-      <td>66.147410</td>
-      <td>63</td>
       <td>True</td>
     </tr>
     <tr>
       <th>4</th>
       <td>M04360:9:000000000-LH9RH:1:2109:8720:15145</td>
-      <td>True</td>
       <td>chr1</td>
-      <td>1245079</td>
-      <td>1245329</td>
       <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>C</td>
-      <td>60</td>
-      <td>71.808000</td>
-      <td>76</td>
       <td>True</td>
     </tr>
     <tr>
       <th>5</th>
       <td>M04360:9:000000000-LH9RH:1:1113:21933:16063</td>
-      <td>True</td>
       <td>chr1</td>
-      <td>1245100</td>
-      <td>1245266</td>
       <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>C</td>
-      <td>60</td>
-      <td>75.789157</td>
-      <td>77</td>
       <td>True</td>
     </tr>
     <tr>
       <th>6</th>
       <td>M04360:9:000000000-LH9RH:1:1113:21659:4980</td>
-      <td>False</td>
       <td>chr1</td>
-      <td>1245123</td>
-      <td>1245267</td>
       <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>C</td>
-      <td>60</td>
-      <td>75.979167</td>
-      <td>77</td>
       <td>True</td>
     </tr>
     <tr>
       <th>7</th>
       <td>M04360:9:000000000-LH9RH:1:2105:9102:26149</td>
-      <td>True</td>
       <td>chr1</td>
-      <td>1245125</td>
-      <td>1245373</td>
       <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>C</td>
-      <td>60</td>
-      <td>34.177419</td>
-      <td>38</td>
       <td>True</td>
     </tr>
     <tr>
       <th>8</th>
       <td>M04360:9:000000000-LH9RH:1:1101:14153:6435</td>
-      <td>False</td>
       <td>chr1</td>
-      <td>1245134</td>
-      <td>1245381</td>
       <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>C</td>
-      <td>60</td>
-      <td>49.340081</td>
-      <td>70</td>
       <td>True</td>
     </tr>
     <tr>
       <th>9</th>
       <td>M04360:9:000000000-LH9RH:1:1106:16059:21370</td>
-      <td>True</td>
       <td>chr1</td>
-      <td>1245136</td>
-      <td>1245257</td>
       <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>C</td>
-      <td>60</td>
-      <td>74.396694</td>
-      <td>75</td>
       <td>True</td>
     </tr>
     <tr>
       <th>10</th>
       <td>M04360:9:000000000-LH9RH:1:1103:25962:11196</td>
-      <td>True</td>
       <td>chr1</td>
-      <td>1245142</td>
-      <td>1245278</td>
       <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>C</td>
-      <td>60</td>
-      <td>75.941176</td>
-      <td>72</td>
       <td>True</td>
     </tr>
     <tr>
       <th>11</th>
       <td>M04360:9:000000000-LH9RH:1:1102:20972:21943</td>
-      <td>True</td>
       <td>chr1</td>
       <td>1245146</td>
-      <td>1245259</td>
-      <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>C</td>
-      <td>60</td>
-      <td>75.088496</td>
-      <td>71</td>
       <td>True</td>
     </tr>
     <tr>
       <th>12</th>
       <td>M04360:9:000000000-LH9RH:1:2106:26111:14092</td>
-      <td>False</td>
       <td>chr1</td>
       <td>1245146</td>
-      <td>1245370</td>
-      <td>1245146</td>
-      <td>+</td>
-      <td>OT</td>
       <td>C</td>
-      <td>60</td>
-      <td>63.723214</td>
-      <td>64</td>
+      <td>True</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>And the second CpG site.</p>
+<div class="cell" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sites <span class="op">=</span> <span class="bu">next</span>(<span class="bu">iter</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site.get_dict() <span class="cf">for</span> site <span class="kw">in</span> sites])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="16">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>read</th>
+      <th>chrom</th>
+      <th>pos</th>
+      <th>base</th>
+      <th>is_methylated</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>M04360:9:000000000-LH9RH:1:2109:6257:10400</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>C</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>M04360:9:000000000-LH9RH:1:1108:22978:8011</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>C</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>M04360:9:000000000-LH9RH:1:2108:13140:14703</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>T</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>M04360:9:000000000-LH9RH:1:1104:27291:19899</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>C</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>M04360:9:000000000-LH9RH:1:2109:8720:15145</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>T</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>M04360:9:000000000-LH9RH:1:1113:21933:16063</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>C</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>M04360:9:000000000-LH9RH:1:1113:21659:4980</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>C</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>M04360:9:000000000-LH9RH:1:2105:9102:26149</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>C</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>M04360:9:000000000-LH9RH:1:1101:14153:6435</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>C</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>M04360:9:000000000-LH9RH:1:1106:16059:21370</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>T</td>
+      <td>False</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>M04360:9:000000000-LH9RH:1:1103:25962:11196</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>C</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>M04360:9:000000000-LH9RH:1:1102:20972:21943</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>C</td>
+      <td>True</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>M04360:9:000000000-LH9RH:1:2106:26111:14092</td>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>C</td>
       <td>True</td>
     </tr>
   </tbody>
@@ -2919,15 +2935,147 @@ vertical-align: -.125em;
 <p>A variety of summary statistics can be calculated from these read sets.</p>
 <p>One is the proportion of reads in which a CpG site is methylated</p>
 <p>Here we calculate DNA methylation levels for each CpG site in the region chr1:1245000-1246000.</p>
-<div class="cell" data-execution_count="6">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>levelcalculator <span class="op">=</span> LevelCalculator(extractor)</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> levelcalculator.<span class="bu">iter</span>(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>levels <span class="op">=</span> pandas.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Here are the DNA methylation levels for the first 5 of the sites in the region.</p>
 <div class="cell" data-execution_count="7">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>levels[<span class="dv">0</span>:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>levels <span class="op">=</span> LevelCalculator(dataset)</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> levels.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="17">
+
+<div>
+
+<table class="dataframe table table-sm table-striped">
+  <thead>
+    <tr>
+      <th></th>
+      <th>chrom</th>
+      <th>pos</th>
+      <th>strand</th>
+      <th>nmeth</th>
+      <th>nunmeth</th>
+      <th>meth_pct</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th>0</th>
+      <td>chr1</td>
+      <td>1245146</td>
+      <td>*</td>
+      <td>12</td>
+      <td>1</td>
+      <td>0.923077</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>chr1</td>
+      <td>1245152</td>
+      <td>*</td>
+      <td>10</td>
+      <td>3</td>
+      <td>0.769231</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>chr1</td>
+      <td>1245159</td>
+      <td>*</td>
+      <td>10</td>
+      <td>4</td>
+      <td>0.714286</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>chr1</td>
+      <td>1245163</td>
+      <td>*</td>
+      <td>12</td>
+      <td>2</td>
+      <td>0.857143</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>chr1</td>
+      <td>1245167</td>
+      <td>*</td>
+      <td>13</td>
+      <td>2</td>
+      <td>0.866667</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>chr1</td>
+      <td>1245172</td>
+      <td>*</td>
+      <td>15</td>
+      <td>2</td>
+      <td>0.882353</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>chr1</td>
+      <td>1245175</td>
+      <td>*</td>
+      <td>14</td>
+      <td>4</td>
+      <td>0.777778</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>chr1</td>
+      <td>1245183</td>
+      <td>*</td>
+      <td>27</td>
+      <td>2</td>
+      <td>0.931034</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>chr1</td>
+      <td>1245219</td>
+      <td>*</td>
+      <td>28</td>
+      <td>4</td>
+      <td>0.875000</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>chr1</td>
+      <td>1245272</td>
+      <td>*</td>
+      <td>22</td>
+      <td>4</td>
+      <td>0.846154</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>chr1</td>
+      <td>1245322</td>
+      <td>*</td>
+      <td>11</td>
+      <td>0</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>chr1</td>
+      <td>1245337</td>
+      <td>*</td>
+      <td>10</td>
+      <td>0</td>
+      <td>1.000000</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+</div>
+<p>CpG sequences are symmetric on DNA strands. By default, <code>MethylSeqDataset</code> merges these as if they are a single genomic position. It is possible to prevent merging.</p>
+<div class="cell" data-execution_count="8">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>dataset_stranded <span class="op">=</span> MethylSeqDataset(bamfn, fastafn, merge_strands<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>levels <span class="op">=</span> LevelCalculator(dataset_stranded)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> levels.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="18">
 
 <div>
 
@@ -2989,6 +3137,96 @@ vertical-align: -.125em;
       <td>2</td>
       <td>0.866667</td>
     </tr>
+    <tr>
+      <th>5</th>
+      <td>chr1</td>
+      <td>1245172</td>
+      <td>+</td>
+      <td>15</td>
+      <td>2</td>
+      <td>0.882353</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>chr1</td>
+      <td>1245175</td>
+      <td>+</td>
+      <td>14</td>
+      <td>4</td>
+      <td>0.777778</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>chr1</td>
+      <td>1245183</td>
+      <td>+</td>
+      <td>18</td>
+      <td>1</td>
+      <td>0.947368</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>chr1</td>
+      <td>1245184</td>
+      <td>-</td>
+      <td>9</td>
+      <td>1</td>
+      <td>0.900000</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>chr1</td>
+      <td>1245219</td>
+      <td>+</td>
+      <td>16</td>
+      <td>4</td>
+      <td>0.800000</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>chr1</td>
+      <td>1245220</td>
+      <td>-</td>
+      <td>12</td>
+      <td>0</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>chr1</td>
+      <td>1245272</td>
+      <td>+</td>
+      <td>11</td>
+      <td>4</td>
+      <td>0.733333</td>
+    </tr>
+    <tr>
+      <th>12</th>
+      <td>chr1</td>
+      <td>1245273</td>
+      <td>-</td>
+      <td>11</td>
+      <td>0</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>13</th>
+      <td>chr1</td>
+      <td>1245323</td>
+      <td>-</td>
+      <td>11</td>
+      <td>0</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>14</th>
+      <td>chr1</td>
+      <td>1245338</td>
+      <td>-</td>
+      <td>10</td>
+      <td>0</td>
+      <td>1.000000</td>
+    </tr>
   </tbody>
 </table>
 </div>
@@ -2998,47 +3236,124 @@ vertical-align: -.125em;
 <section id="view-dna-methylation-patterns" class="level2">
 <h2 class="anchored" data-anchor-id="view-dna-methylation-patterns">View DNA methylation patterns</h2>
 <p>These read sets can also be simplified to just retrieve the DNA methylation patterns within a window of specified size as it ‘slides’ across the genome.</p>
-<p>Here we show the DNA methylation patterns for the entire 1000 bp region.</p>
-<div class="cell" data-execution_count="8">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>slider <span class="op">=</span> WindowSlider(WindowMaker(<span class="dv">1000</span>), extractor)</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> slider.<span class="bu">iter</span>(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">next</span>(<span class="bu">iter</span>)) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Here we show the DNA methylation patterns 200 base-pairs at a time.</p>
+<div class="cell" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>window <span class="op">=</span> Window(dataset,<span class="dv">200</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> window.slide(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">next</span>(<span class="bu">iter</span>)) <span class="co">## first window position</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">next</span>(<span class="bu">iter</span>)) <span class="co">## second window position</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>chrom = chr1 positions = [1245146, 1245152, 1245159, 1245163, 1245167, 1245172, 1245175, 1245183, 1245219, 1245272, 1245322, 1245337]
- M04360:9:000000000-LH9RH:1:2109:6257:10400 1 1 0 0 1 1 0 1 0 0    
- M04360:9:000000000-LH9RH:1:1108:22978:8011 1 1 1 1 1 1 1 1 1 1    
-M04360:9:000000000-LH9RH:1:2108:13140:14703 0 0 0 1 0 1 0 0 1 1    
-M04360:9:000000000-LH9RH:1:1104:27291:19899 1 1 1 1 1 1 1 1 1 1 1  
- M04360:9:000000000-LH9RH:1:2109:8720:15145 1 0 1 1 1 1 1 1 1 1 1  
-M04360:9:000000000-LH9RH:1:1113:21933:16063 1 1 1 1 1 1 1 1 0      
- M04360:9:000000000-LH9RH:1:1113:21659:4980 1 1 0 1 1 1 0 1 1      
- M04360:9:000000000-LH9RH:1:2105:9102:26149 1 1 1 1 1 1 1 1 1 1 1  
- M04360:9:000000000-LH9RH:1:1101:14153:6435 1 1 0 0 0 0 1 1 1 0 1  
-M04360:9:000000000-LH9RH:1:1106:16059:21370 1 0 1 1 1 0 1 1 0      
-M04360:9:000000000-LH9RH:1:1103:25962:11196 1 1 1 1 1 1 0 1 1 0    
-M04360:9:000000000-LH9RH:1:1102:20972:21943 1 1 1 1 1 1 1 1 1      
-M04360:9:000000000-LH9RH:1:2106:26111:14092 1 1 1 1 1 1 1 1 1 0 1  
-M04360:9:000000000-LH9RH:1:2108:14423:18242     1 1 1 1 1 1 1 1 0  
- M04360:9:000000000-LH9RH:1:1111:5928:17210         1 1 1 1 0 1 1  
- M04360:9:000000000-LH9RH:1:2106:7286:15502           1 1 1 1 1 1  
-M04360:9:000000000-LH9RH:1:1114:19652:21948           1 1 1 1      
- M04360:9:000000000-LH9RH:1:2106:24467:9394             1 1 1 1 1  
- M04360:9:000000000-LH9RH:1:1107:7101:15186               1 1 1    
- M04360:9:000000000-LH9RH:1:1109:21086:9700               1 1      
- M04360:9:000000000-LH9RH:1:1111:6708:24481               1 1      
-M04360:9:000000000-LH9RH:1:2112:14689:24809               1 1 1 1  
-M04360:9:000000000-LH9RH:1:2110:16556:23610               1 1      
- M04360:9:000000000-LH9RH:1:2113:15099:9887               1   1 1 1
-M04360:9:000000000-LH9RH:1:1111:18609:17222               1 1 1 1 1
-M04360:9:000000000-LH9RH:1:1104:23237:20825               1 1 1 1 1
- M04360:9:000000000-LH9RH:1:2103:8626:17478               1 1 1 1 1
- M04360:9:000000000-LH9RH:1:1104:15610:9458               1 1 1 1 1
-M04360:9:000000000-LH9RH:1:1106:27314:22621               0 1 1 1 1
-M04360:9:000000000-LH9RH:1:1103:25357:11898                 1 1 1  
- M04360:9:000000000-LH9RH:1:2106:20264:8905                 1 1 1 1
- M04360:9:000000000-LH9RH:1:1112:17989:1584                 1 1 1 1
-M04360:9:000000000-LH9RH:1:2110:19666:16827                 1 1 1 1
-M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
+<pre><code>positions = 
+ 1245146
+ 1245152
+ 1245159
+ 1245163
+ 1245167
+ 1245172
+ 1245175
+ 1245183
+meth=
+ M04360:9:000000000-LH9RH:1:2109:6257:10400 1 1 0 0 1 1 0 1
+ M04360:9:000000000-LH9RH:1:1108:22978:8011 1 1 1 1 1 1 1 1
+M04360:9:000000000-LH9RH:1:2108:13140:14703 0 0 0 1 0 1 0 0
+M04360:9:000000000-LH9RH:1:1104:27291:19899 1 1 1 1 1 1 1 1
+ M04360:9:000000000-LH9RH:1:2109:8720:15145 1 0 1 1 1 1 1 1
+M04360:9:000000000-LH9RH:1:1113:21933:16063 1 1 1 1 1 1 1 1
+ M04360:9:000000000-LH9RH:1:1113:21659:4980 1 1 0 1 1 1 0 1
+ M04360:9:000000000-LH9RH:1:2105:9102:26149 1 1 1 1 1 1 1 1
+ M04360:9:000000000-LH9RH:1:1101:14153:6435 1 1 0 0 0 0 1 1
+M04360:9:000000000-LH9RH:1:1106:16059:21370 1 0 1 1 1 0 1 1
+M04360:9:000000000-LH9RH:1:1103:25962:11196 1 1 1 1 1 1 0 1
+M04360:9:000000000-LH9RH:1:1102:20972:21943 1 1 1 1 1 1 1 1
+M04360:9:000000000-LH9RH:1:2106:26111:14092 1 1 1 1 1 1 1 1
+M04360:9:000000000-LH9RH:1:2108:14423:18242     1 1 1 1 1 1
+ M04360:9:000000000-LH9RH:1:1111:5928:17210         1 1 1 1
+ M04360:9:000000000-LH9RH:1:2106:7286:15502           1 1 1
+M04360:9:000000000-LH9RH:1:1114:19652:21948           1 1 1
+ M04360:9:000000000-LH9RH:1:2106:24467:9394             1 1
+ M04360:9:000000000-LH9RH:1:1107:7101:15186               1
+ M04360:9:000000000-LH9RH:1:1109:21086:9700               1
+ M04360:9:000000000-LH9RH:1:1111:6708:24481               1
+M04360:9:000000000-LH9RH:1:2112:14689:24809               1
+M04360:9:000000000-LH9RH:1:2110:16556:23610               1
+ M04360:9:000000000-LH9RH:1:2113:15099:9887               1
+M04360:9:000000000-LH9RH:1:1111:18609:17222               1
+M04360:9:000000000-LH9RH:1:1104:23237:20825               1
+ M04360:9:000000000-LH9RH:1:2103:8626:17478               1
+ M04360:9:000000000-LH9RH:1:1104:15610:9458               1
+M04360:9:000000000-LH9RH:1:1106:27314:22621               0
+positions = 
+ 1245146
+ 1245152
+ 1245159
+ 1245163
+ 1245167
+ 1245172
+ 1245175
+ 1245183
+ 1245219
+meth=
+ M04360:9:000000000-LH9RH:1:2109:6257:10400 1 1 0 0 1 1 0 1  
+ M04360:9:000000000-LH9RH:1:1108:22978:8011 1 1 1 1 1 1 1 1  
+M04360:9:000000000-LH9RH:1:2108:13140:14703 0 0 0 1 0 1 0 0  
+M04360:9:000000000-LH9RH:1:1104:27291:19899 1 1 1 1 1 1 1 1  
+ M04360:9:000000000-LH9RH:1:2109:8720:15145 1 0 1 1 1 1 1 1  
+M04360:9:000000000-LH9RH:1:1113:21933:16063 1 1 1 1 1 1 1 1  
+ M04360:9:000000000-LH9RH:1:1113:21659:4980 1 1 0 1 1 1 0 1  
+ M04360:9:000000000-LH9RH:1:2105:9102:26149 1 1 1 1 1 1 1 1  
+ M04360:9:000000000-LH9RH:1:1101:14153:6435 1 1 0 0 0 0 1 1  
+M04360:9:000000000-LH9RH:1:1106:16059:21370 1 0 1 1 1 0 1 1  
+M04360:9:000000000-LH9RH:1:1103:25962:11196 1 1 1 1 1 1 0 1  
+M04360:9:000000000-LH9RH:1:1102:20972:21943 1 1 1 1 1 1 1 1  
+M04360:9:000000000-LH9RH:1:2106:26111:14092 1 1 1 1 1 1 1 1  
+M04360:9:000000000-LH9RH:1:2108:14423:18242     1 1 1 1 1 1  
+ M04360:9:000000000-LH9RH:1:1111:5928:17210         1 1 1 1  
+ M04360:9:000000000-LH9RH:1:2106:7286:15502           1 1 1  
+M04360:9:000000000-LH9RH:1:1114:19652:21948           1 1 1  
+ M04360:9:000000000-LH9RH:1:2106:24467:9394             1 1  
+ M04360:9:000000000-LH9RH:1:1107:7101:15186               1  
+ M04360:9:000000000-LH9RH:1:1109:21086:9700               1  
+ M04360:9:000000000-LH9RH:1:1111:6708:24481               1  
+M04360:9:000000000-LH9RH:1:2112:14689:24809               1  
+M04360:9:000000000-LH9RH:1:2110:16556:23610               1  
+ M04360:9:000000000-LH9RH:1:2113:15099:9887               1  
+M04360:9:000000000-LH9RH:1:1111:18609:17222               1  
+M04360:9:000000000-LH9RH:1:1104:23237:20825               1  
+ M04360:9:000000000-LH9RH:1:2103:8626:17478               1  
+ M04360:9:000000000-LH9RH:1:1104:15610:9458               1  
+M04360:9:000000000-LH9RH:1:1106:27314:22621               0  
+ M04360:9:000000000-LH9RH:1:2109:6257:10400                 0
+ M04360:9:000000000-LH9RH:1:1108:22978:8011                 1
+M04360:9:000000000-LH9RH:1:2108:13140:14703                 1
+M04360:9:000000000-LH9RH:1:1104:27291:19899                 1
+ M04360:9:000000000-LH9RH:1:2109:8720:15145                 1
+M04360:9:000000000-LH9RH:1:1113:21933:16063                 0
+ M04360:9:000000000-LH9RH:1:1113:21659:4980                 1
+ M04360:9:000000000-LH9RH:1:2105:9102:26149                 1
+ M04360:9:000000000-LH9RH:1:1101:14153:6435                 1
+M04360:9:000000000-LH9RH:1:1106:16059:21370                 0
+M04360:9:000000000-LH9RH:1:1103:25962:11196                 1
+M04360:9:000000000-LH9RH:1:1102:20972:21943                 1
+M04360:9:000000000-LH9RH:1:2106:26111:14092                 1
+M04360:9:000000000-LH9RH:1:2108:14423:18242                 1
+ M04360:9:000000000-LH9RH:1:2106:7286:15502                 1
+M04360:9:000000000-LH9RH:1:1114:19652:21948                 1
+ M04360:9:000000000-LH9RH:1:2106:24467:9394                 1
+ M04360:9:000000000-LH9RH:1:1107:7101:15186                 1
+M04360:9:000000000-LH9RH:1:1103:25357:11898                 1
+ M04360:9:000000000-LH9RH:1:1111:5928:17210                 0
+ M04360:9:000000000-LH9RH:1:1109:21086:9700                 1
+ M04360:9:000000000-LH9RH:1:1111:6708:24481                 1
+M04360:9:000000000-LH9RH:1:2112:14689:24809                 1
+M04360:9:000000000-LH9RH:1:2110:16556:23610                 1
+M04360:9:000000000-LH9RH:1:1111:18609:17222                 1
+M04360:9:000000000-LH9RH:1:1104:23237:20825                 1
+ M04360:9:000000000-LH9RH:1:2103:8626:17478                 1
+ M04360:9:000000000-LH9RH:1:1104:15610:9458                 1
+M04360:9:000000000-LH9RH:1:1106:27314:22621                 1
+ M04360:9:000000000-LH9RH:1:2106:20264:8905                 1
+ M04360:9:000000000-LH9RH:1:1112:17989:1584                 1
+M04360:9:000000000-LH9RH:1:2110:19666:16827                 1</code></pre>
 </div>
 </div>
 </section>
@@ -3046,15 +3361,11 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
 <h2 class="anchored" data-anchor-id="count-clonal-flips">Count clonal flips</h2>
 <p>From these DNA methylation patterns, we can calculate how DNA methylation varies within and between reads. There are a variety of such metrics.</p>
 <p>One metric calculates the number of times the DNA methylation of CpG sites changes as one moves from one end of a DNA fragment (corresponding to a read pair) to the other.</p>
-<div class="cell" data-execution_count="9">
-<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>counter <span class="op">=</span> ClonalFlipCounter(slider)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> counter.<span class="bu">iter</span>(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>flips <span class="op">=</span> pandas.DataFrame([ region <span class="cf">for</span> region <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</div>
-<p>Here we show these counts for the first 5 window positions.</p>
 <div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>flips[<span class="dv">0</span>:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>flips <span class="op">=</span> ClonalFlipCounter(dataset,<span class="dv">200</span>)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> flips.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([ region <span class="cf">for</span> region <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="20">
 
 <div>
 
@@ -3065,7 +3376,6 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
       <th>chrom</th>
       <th>start</th>
       <th>end</th>
-      <th>nsites</th>
       <th>nflips</th>
       <th>npossible</th>
       <th>flip_pct</th>
@@ -3078,15 +3388,62 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
     <tr>
       <th>0</th>
       <td>chr1</td>
-      <td>1245146</td>
+      <td>1245000</td>
+      <td>1245200</td>
+      <td>22</td>
+      <td>104</td>
+      <td>0.211538</td>
+      <td>113</td>
+      <td>20</td>
+      <td>0.849624</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>chr1</td>
+      <td>1245019</td>
+      <td>1245219</td>
+      <td>22</td>
+      <td>104</td>
+      <td>0.211538</td>
+      <td>141</td>
+      <td>24</td>
+      <td>0.854545</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>chr1</td>
+      <td>1245072</td>
+      <td>1245272</td>
+      <td>22</td>
+      <td>104</td>
+      <td>0.211538</td>
+      <td>163</td>
+      <td>28</td>
+      <td>0.853403</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>chr1</td>
+      <td>1245122</td>
+      <td>1245322</td>
+      <td>22</td>
+      <td>115</td>
+      <td>0.191304</td>
+      <td>174</td>
+      <td>28</td>
+      <td>0.861386</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>chr1</td>
+      <td>1245137</td>
       <td>1245337</td>
-      <td>12</td>
-      <td>35</td>
-      <td>188</td>
-      <td>0.18617</td>
-      <td>193</td>
-      <td>29</td>
-      <td>0.869369</td>
+      <td>22</td>
+      <td>125</td>
+      <td>0.176000</td>
+      <td>184</td>
+      <td>28</td>
+      <td>0.867925</td>
     </tr>
   </tbody>
 </table>
@@ -3106,15 +3463,12 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
 </figure>
 </div>
 <p>Not shown in the figure is the fact that CAMDA scores can be calculated for individual CpG sites (i.e. the proportion of times a CpG site is a concurrence site) or for regions of a given size (i.e. the proportion of times CpG sites in a region are concurrence sites).</p>
-<p>Input to the CAMDA calculator are ‘region_size’ (the size of the CpG-centered region for the CAMDA score) and ‘max_read_length’ (the longest expected read length).</p>
+<p>The ‘size’ argument to <code>CAMDACalculator</code> sets the size of the CpG-centered region for the CAMDA score. In the original CAMDA package, this is not an option and is always set to 1 (as below).</p>
 <div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>region_size <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>max_read_length <span class="op">=</span> <span class="dv">250</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>camdacalculator <span class="op">=</span> CAMDACalculator(region_size,max_read_length,extractor)</span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> camdacalculator.<span class="bu">iter</span>(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> pandas.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>scores[<span class="dv">0</span>:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>camda <span class="op">=</span> CAMDACalculator(dataset, <span class="dv">1</span>)</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> camda.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="21">
 
 <div>
 
@@ -3123,11 +3477,16 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
     <tr>
       <th></th>
       <th>chrom</th>
-      <th>pos</th>
-      <th>ncytosines</th>
+      <th>start</th>
+      <th>end</th>
+      <th>depth</th>
+      <th>nconcurrence</th>
       <th>camda</th>
-      <th>nclones</th>
-      <th>weighted_camda</th>
+      <th>nconcurrence_clones</th>
+      <th>nmeth_clones</th>
+      <th>unweighted</th>
+      <th>nmeth</th>
+      <th>meth_pct</th>
     </tr>
   </thead>
   <tbody>
@@ -3135,46 +3494,169 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
       <th>0</th>
       <td>chr1</td>
       <td>1245146</td>
+      <td>1245147</td>
       <td>13</td>
+      <td>1</td>
       <td>0.076923</td>
-      <td>13</td>
-      <td>0.692308</td>
+      <td>7</td>
+      <td>6</td>
+      <td>0.538462</td>
+      <td>12</td>
+      <td>0.923077</td>
     </tr>
     <tr>
       <th>1</th>
       <td>chr1</td>
       <td>1245152</td>
+      <td>1245153</td>
       <td>13</td>
+      <td>3</td>
       <td>0.230769</td>
-      <td>13</td>
-      <td>0.692308</td>
+      <td>7</td>
+      <td>6</td>
+      <td>0.538462</td>
+      <td>10</td>
+      <td>0.769231</td>
     </tr>
     <tr>
       <th>2</th>
       <td>chr1</td>
       <td>1245159</td>
+      <td>1245160</td>
       <td>14</td>
+      <td>4</td>
       <td>0.285714</td>
-      <td>14</td>
+      <td>7</td>
+      <td>7</td>
+      <td>0.500000</td>
+      <td>10</td>
       <td>0.714286</td>
     </tr>
     <tr>
       <th>3</th>
       <td>chr1</td>
       <td>1245163</td>
+      <td>1245164</td>
       <td>14</td>
+      <td>2</td>
       <td>0.142857</td>
-      <td>14</td>
-      <td>0.714286</td>
+      <td>7</td>
+      <td>7</td>
+      <td>0.500000</td>
+      <td>12</td>
+      <td>0.857143</td>
     </tr>
     <tr>
       <th>4</th>
       <td>chr1</td>
       <td>1245167</td>
+      <td>1245168</td>
       <td>15</td>
+      <td>2</td>
       <td>0.133333</td>
+      <td>7</td>
+      <td>8</td>
+      <td>0.466667</td>
+      <td>13</td>
+      <td>0.866667</td>
+    </tr>
+    <tr>
+      <th>5</th>
+      <td>chr1</td>
+      <td>1245172</td>
+      <td>1245173</td>
+      <td>17</td>
+      <td>2</td>
+      <td>0.117647</td>
+      <td>7</td>
+      <td>10</td>
+      <td>0.411765</td>
       <td>15</td>
-      <td>0.733333</td>
+      <td>0.882353</td>
+    </tr>
+    <tr>
+      <th>6</th>
+      <td>chr1</td>
+      <td>1245175</td>
+      <td>1245176</td>
+      <td>18</td>
+      <td>4</td>
+      <td>0.222222</td>
+      <td>7</td>
+      <td>11</td>
+      <td>0.388889</td>
+      <td>14</td>
+      <td>0.777778</td>
+    </tr>
+    <tr>
+      <th>7</th>
+      <td>chr1</td>
+      <td>1245183</td>
+      <td>1245184</td>
+      <td>29</td>
+      <td>1</td>
+      <td>0.034483</td>
+      <td>7</td>
+      <td>21</td>
+      <td>0.241379</td>
+      <td>27</td>
+      <td>0.931034</td>
+    </tr>
+    <tr>
+      <th>8</th>
+      <td>chr1</td>
+      <td>1245219</td>
+      <td>1245220</td>
+      <td>32</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>0</td>
+      <td>28</td>
+      <td>0.000000</td>
+      <td>28</td>
+      <td>0.875000</td>
+    </tr>
+    <tr>
+      <th>9</th>
+      <td>chr1</td>
+      <td>1245272</td>
+      <td>1245273</td>
+      <td>26</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>0</td>
+      <td>22</td>
+      <td>0.000000</td>
+      <td>22</td>
+      <td>0.846154</td>
+    </tr>
+    <tr>
+      <th>10</th>
+      <td>chr1</td>
+      <td>1245322</td>
+      <td>1245323</td>
+      <td>11</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>0</td>
+      <td>11</td>
+      <td>0.000000</td>
+      <td>11</td>
+      <td>1.000000</td>
+    </tr>
+    <tr>
+      <th>11</th>
+      <td>chr1</td>
+      <td>1245337</td>
+      <td>1245338</td>
+      <td>10</td>
+      <td>0</td>
+      <td>0.000000</td>
+      <td>0</td>
+      <td>10</td>
+      <td>0.000000</td>
+      <td>10</td>
+      <td>1.000000</td>
     </tr>
   </tbody>
 </table>
@@ -3186,13 +3668,11 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
 <h2 class="anchored" data-anchor-id="calculate-concurrence-scores">Calculate concurrence scores</h2>
 <p>We can similarly calculate DNA methylation concurrence scores, i.e. in a given window, the proportion of unmethylated CpG sites in a read with at least one methylated CpG site relative to the set of all CpG sites in all reads.</p>
 <p><strong>Note:</strong> this is different from the published ‘CAMDA’ score calculated above which performs these calculations across entire reads rather than just within the window. We restrict the calculation to the window to avoid an overdependence of the calculated statistics on read length.</p>
-<p>Here we use the <code>slider</code> definition from above, so the window size is 200 bp and show the scores for the first 5 window positions.</p>
 <div class="cell" data-execution_count="12">
-<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>concurrencecalculator <span class="op">=</span> ConcurrenceCalculator(slider)</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> concurrencecalculator.<span class="bu">iter</span>(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>scores <span class="op">=</span> pandas.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>scores[<span class="dv">0</span>:<span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>concurrence <span class="op">=</span> ConcurrenceCalculator(dataset,<span class="dv">200</span>)</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> concurrence.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([region <span class="cf">for</span> region <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="22">
 
 <div>
 
@@ -3203,15 +3683,12 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
       <th>chrom</th>
       <th>start</th>
       <th>end</th>
-      <th>nsites</th>
+      <th>depth</th>
       <th>nconcurrence</th>
-      <th>ncytosines</th>
       <th>concurrence</th>
       <th>nconcurrence_clones</th>
-      <th>nclones</th>
-      <th>weighted_concurrence</th>
+      <th>unweighted</th>
       <th>nmeth</th>
-      <th>nunmeth</th>
       <th>meth_pct</th>
     </tr>
   </thead>
@@ -3219,18 +3696,67 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
     <tr>
       <th>0</th>
       <td>chr1</td>
-      <td>1245146</td>
+      <td>1245000</td>
+      <td>1245200</td>
+      <td>18</td>
+      <td>19</td>
+      <td>0.155738</td>
+      <td>7</td>
+      <td>0.388889</td>
+      <td>103</td>
+      <td>0.730496</td>
+    </tr>
+    <tr>
+      <th>1</th>
+      <td>chr1</td>
+      <td>1245019</td>
+      <td>1245219</td>
+      <td>18</td>
+      <td>19</td>
+      <td>0.155738</td>
+      <td>7</td>
+      <td>0.388889</td>
+      <td>103</td>
+      <td>0.730496</td>
+    </tr>
+    <tr>
+      <th>2</th>
+      <td>chr1</td>
+      <td>1245072</td>
+      <td>1245272</td>
+      <td>18</td>
+      <td>19</td>
+      <td>0.155738</td>
+      <td>7</td>
+      <td>0.388889</td>
+      <td>103</td>
+      <td>0.730496</td>
+    </tr>
+    <tr>
+      <th>3</th>
+      <td>chr1</td>
+      <td>1245122</td>
+      <td>1245322</td>
+      <td>29</td>
+      <td>19</td>
+      <td>0.131944</td>
+      <td>7</td>
+      <td>0.241379</td>
+      <td>125</td>
+      <td>0.766871</td>
+    </tr>
+    <tr>
+      <th>4</th>
+      <td>chr1</td>
+      <td>1245137</td>
       <td>1245337</td>
-      <td>12</td>
       <td>29</td>
-      <td>222</td>
-      <td>0.130631</td>
-      <td>12</td>
-      <td>34</td>
-      <td>0.352941</td>
-      <td>193</td>
-      <td>29</td>
-      <td>0.768924</td>
+      <td>19</td>
+      <td>0.123377</td>
+      <td>7</td>
+      <td>0.241379</td>
+      <td>135</td>
+      <td>0.780347</td>
     </tr>
   </tbody>
 </table>
@@ -3244,17 +3770,18 @@ M04360:9:000000000-LH9RH:1:2114:22282:19171                   1 1 1</code></pre>
 <p>For example, here we count DNA methylation ‘flip’ statistics chromosome-by-chromosome and save the results to CSV files.</p>
 <div class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> multiprocessing</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_chrom_concurrences(chrom):</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>  regions <span class="op">=</span> concurrencecalculator.<span class="bu">iter</span>(chrom)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> pandas.DataFrame([region <span class="cf">for</span> region <span class="kw">in</span> regions])</span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>chromosomes <span class="op">=</span> [<span class="st">&quot;chr&quot;</span><span class="op">+</span><span class="bu">str</span>(i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,<span class="dv">23</span>)] <span class="op">+</span> [<span class="st">&quot;chrX&quot;</span>]</span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> multiprocessing.Pool(processes<span class="op">=</span><span class="dv">12</span>) <span class="im">as</span> pool:</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> stats <span class="kw">in</span> pool.imap(calculate_chrom_concurrences, chromosomes):</span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(stats) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>            stats.to_csv(<span class="st">&quot;clonalflipcounts_&quot;</span> <span class="op">+</span> stats[<span class="st">&#39;chrom&#39;</span>][<span class="dv">0</span>] <span class="op">+</span> <span class="st">&quot;.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>concurrence <span class="op">=</span> ConcurrenceCalculator(dataset,<span class="dv">200</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> calculate_chrom_concurrences(chrom):</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">iter</span> <span class="op">=</span> concurrence.calculate(chrom)</span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> pd.DataFrame([region <span class="cf">for</span> region <span class="kw">in</span> <span class="bu">iter</span>])</span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>chromosomes <span class="op">=</span> [<span class="st">&quot;chr&quot;</span><span class="op">+</span><span class="bu">str</span>(i) <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">1</span>,<span class="dv">23</span>)] <span class="op">+</span> [<span class="st">&quot;chrX&quot;</span>]</span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> multiprocessing.Pool(processes<span class="op">=</span><span class="dv">12</span>) <span class="im">as</span> pool:</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> stats <span class="kw">in</span> pool.imap(calculate_chrom_concurrences, chromosomes):</span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> <span class="bu">len</span>(stats) <span class="op">&gt;</span> <span class="dv">0</span>:</span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>            stats.to_csv(<span class="st">&quot;concurrences_&quot;</span> <span class="op">+</span> stats[<span class="st">&#39;chrom&#39;</span>][<span class="dv">0</span>] <span class="op">+</span> <span class="st">&quot;.csv&quot;</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 

@@ -13,7 +13,7 @@ class ConcurrenceCalculator:
             meth = 0
             unmeth = 0
             concurrence_clones = 0
-            clones = 0
+            number_clones = 0
             for read in view.get_reads():
                 clone_meth = 0
                 clone_unmeth = 0
@@ -22,24 +22,27 @@ class ConcurrenceCalculator:
                         clone_meth += 1
                     else:
                         clone_unmeth += 1
+                if clone_meth + clone_unmeth < 2:
+                    continue
                 meth += clone_meth
                 unmeth += clone_unmeth
                 if clone_unmeth > 0:
-                    clones += 1
+                    number_clones += 1
                     if clone_meth > 0:
                         concurrence += clone_unmeth
                         concurrence_clones += 1
                 elif clone_meth > 0:
-                    clones += 1
+                    number_clones += 1
             if meth + unmeth > 0:
                 yield { 
                     "chrom":view.chrom,
                     "start":view.start,
                     "end":view.end,
+                    "depth":number_clones,
                     "nconcurrence":concurrence, 
                     "concurrence": concurrence/float(meth+unmeth),
                     "nconcurrence_clones":concurrence_clones,
-                    "unweighted_concurrence":concurrence_clones/float(clones),
+                    "unweighted":concurrence_clones/float(number_clones),
                     "nmeth": meth,
                     "meth_pct": float(meth)/float(concurrence+meth+unmeth)
                 }

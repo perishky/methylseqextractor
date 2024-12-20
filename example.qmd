@@ -19,6 +19,7 @@ All necessary modules can be imported as follows:
 ```{python}
 #| eval: false
 from methylseqextractor import (
+  Window,
   MethylSeqDataset,
   LevelCalculator,
   ClonalFlipCounter,
@@ -30,6 +31,7 @@ from methylseqextractor import (
 ```{python}
 #| echo: false
 from src import (
+  Window,
   MethylSeqDataset,
   LevelCalculator,
   ClonalFlipCounter,
@@ -43,7 +45,7 @@ In the examples below, we'll use `pandas` to
 store outputs as data frames.
 
 ```{python}
-import pandas
+import pandas as pd
 ```
 
 ## Extract reads containing specified CpG sites
@@ -64,7 +66,15 @@ Each step of this iterator will return the reads of a different CpG site.
 Here are the reads for the first CpG site. 
 
 ```{python}
-pandas.DataFrame(next(iter))
+sites = next(iter)
+pd.DataFrame([site.get_dict() for site in sites])
+```
+
+And the second CpG site.
+
+```{python}
+sites = next(iter)
+pd.DataFrame([site.get_dict() for site in sites])
 ```
 
 ## Calculate DNA methylation levels
@@ -79,14 +89,19 @@ in the region chr1:1245000-1246000.
 ```{python}
 levels = LevelCalculator(dataset)
 iter = levels.calculate("chr1", 1245000, 1246000)
-scores = pandas.DataFrame([site for site in iter])
+pd.DataFrame([site for site in iter])
 ```
 
-Here are the DNA methylation levels for the first 5
-of the sites in the region.
+CpG sequences are symmetric on DNA strands.
+By default, `MethylSeqDataset` merges these as if they
+are a single genomic position.
+It is possible to prevent merging. 
 
 ```{python}
-scores[0:5]
+dataset_stranded = MethylSeqDataset(bamfn, fastafn, merge_strands=False)
+levels = LevelCalculator(dataset_stranded)
+iter = levels.calculate("chr1", 1245000, 1246000)
+pd.DataFrame([site for site in iter])
 ```
 
 ## View DNA methylation patterns
@@ -95,13 +110,14 @@ These read sets can also be simplified to just
 retrieve the DNA methylation patterns within 
 a window of specified size as it 'slides' across the genome.
 
-Here we show the DNA methylation patterns 
-for the entire 1000 bp region.
+Here we show the DNA methylation patterns
+200 base-pairs at a time.
 
 ```{python}
-window = Window(dataset,1000)
+window = Window(dataset,200)
 iter = window.slide("chr1", 1245000, 1246000)
 print(next(iter)) ## first window position
+print(next(iter)) ## second window position
 ```
 
 ## Count clonal flips
@@ -115,15 +131,9 @@ of CpG sites changes as one moves from one end of a
 DNA fragment (corresponding to a read pair) to the other. 
 
 ```{python}
-flips = ClonalFlipCounter(dataset,1000)
+flips = ClonalFlipCounter(dataset,200)
 iter = flips.calculate("chr1", 1245000, 1246000)
-scores = pandas.DataFrame([ region for region in iter])
-```
-
-Here we show these counts for the first 5 window positions.
-
-```{python}
-scores[0:5]
+pd.DataFrame([ region for region in iter])
 ```
 
 ## Calculate CAMDA scores 
@@ -147,12 +157,13 @@ or for regions of a given size
 
 The 'size' argument to `CAMDACalculator`
 sets the size of the CpG-centered region for the CAMDA score.
+In the original CAMDA package, this is not an option and is always
+set to 1 (as below).
 
 ```{python}
 camda = CAMDACalculator(dataset, 1)
 iter = camda.calculate("chr1", 1245000, 1246000)
-scores = pandas.DataFrame([site for site in iter])
-scores[0:5]
+pd.DataFrame([site for site in iter])
 ```
 
 ## Calculate concurrence scores
@@ -169,14 +180,10 @@ entire reads rather than just within the window.
 We restrict the calculation to the window
 to avoid an overdependence of the calculated statistics on read length.
 
-Here we use the `slider` definition from above, so the window size 
-is 200 bp and show the scores for the first 5 window positions.
-
 ```{python}
-concurrence = ConcurrenceCalculator(dataset,1000)
+concurrence = ConcurrenceCalculator(dataset,200)
 iter = concurrence.calculate("chr1", 1245000, 1246000)
-scores = pandas.DataFrame([region for region in iter])
-scores[0:5]
+pd.DataFrame([region for region in iter])
 ```
 
 ## Analysing the entire genome efficiently using multiple processors
@@ -193,15 +200,16 @@ chromosome-by-chromosome and save the results to CSV files.
 #| eval: false
 
 import multiprocessing
+concurrence = ConcurrenceCalculator(dataset,200)
 
 def calculate_chrom_concurrences(chrom):
-  iter = concurrence.calculate(chrom)
-  return pandas.DataFrame([region for region in iter])
+    iter = concurrence.calculate(chrom)
+    return pd.DataFrame([region for region in iter])
 
 chromosomes = ["chr"+str(i) for i in range(1,23)] + ["chrX"]
 
 with multiprocessing.Pool(processes=12) as pool:
     for stats in pool.imap(calculate_chrom_concurrences, chromosomes):
         if len(stats) > 0:
-            stats.to_csv("clonalflipcounts_" + stats['chrom'][0] + ".csv")
+            stats.to_csv("concurrences_" + stats['chrom'][0] + ".csv")
 ```

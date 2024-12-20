@@ -9,25 +9,31 @@ from src import (
   CAMDACalculator
 )
 
-import pandas
+import pandas as pd
 
 ## Extract reads containing specified CpG sites
 
 bamfn = "data/sample.bam"
 fastafn = "genome/hg19.fa"
 dataset = MethylSeqDataset(bamfn, fastafn)
-iter = dataset.methylation("chr1",1245000,1246000)
 
+iter = dataset.methylation("chr1",1245000,1246000)
 sites = next(iter)
-pandas.DataFrame([site.get_dict() for site in sites])
+print(pd.DataFrame([site.get_dict() for site in sites]))
+sites = next(iter)
+print(pd.DataFrame([site.get_dict() for site in sites]))
 
 ## Calculate DNA methylation levels
 
 levels = LevelCalculator(dataset)
 iter = levels.calculate("chr1", 1245000, 1246000)
-scores = pandas.DataFrame([site for site in iter])
+print(pd.DataFrame([site for site in iter]))
 
-scores[0:5]
+dataset_stranded = MethylSeqDataset(bamfn, fastafn, merge_strands=False)
+levels = LevelCalculator(dataset_stranded)
+iter = levels.calculate("chr1", 1245000, 1246000)
+print(pd.DataFrame([site for site in iter]))
+
 
 ## View DNA methylation patterns
 
@@ -41,22 +47,22 @@ print(next(iter)) ## third window position
 
 flips = ClonalFlipCounter(dataset,200)
 iter = flips.calculate("chr1", 1245000, 1246000)
-scores = pandas.DataFrame([ region for region in iter])
+scores = pd.DataFrame([ region for region in iter])
 
 scores[0:5]
 
 ## Calculate CAMDA scores 
 camda = CAMDACalculator(dataset, 1)
 iter = camda.calculate("chr1", 1245000, 1246000)
-scores = pandas.DataFrame([site for site in iter])
+scores = pd.DataFrame([site for site in iter])
 
-scores[0:5]
+scores
 
 ## Calculate concurrence scores
 
 concurrence = ConcurrenceCalculator(dataset,200)
 iter = concurrence.calculate("chr1", 1245000, 1246000)
-scores = pandas.DataFrame([region for region in iter])
+scores = pd.DataFrame([region for region in iter])
 
 scores[0:5]
 
@@ -64,11 +70,11 @@ scores[0:5]
 
 if False:
   import multiprocessing
-  concurrence = ConcurrenceCalculator(dataset,1000)
+  concurrence = ConcurrenceCalculator(dataset,200)
 
   def calculate_chrom_concurrences(chrom):
     iter = concurrence.calculate(chrom)
-    return pandas.DataFrame([region for region in iter])
+    return pd.DataFrame([region for region in iter])
 
   chromosomes = ["chr"+str(i) for i in range(1,23)] + ["chrX"]
 

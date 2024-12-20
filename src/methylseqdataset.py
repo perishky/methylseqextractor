@@ -8,6 +8,7 @@ class MethylSeqDataset:
             self, 
             bamfn,
             fastafn,
+            merge_strands=True,
             min_mapq=10, 
             min_read_quality=5,
             min_base_quality=5,
@@ -29,10 +30,38 @@ class MethylSeqDataset:
         self.min_read_quality=min_read_quality
         self.min_base_quality=min_base_quality
         self.min_depth=min_depth
+        self.merge_strands = merge_strands
 
     def methylation(self,chrom,start=0,end=None):
+        if not self.merge_strands:
+            return self.methylation_stranded(chrom,start,end)
+        else:
+            return self.methylation_unstranded(chrom,start,end)
+
+    def methylation_unstranded(self,chrom,start=0,end=None):
+        previous_column = []
+        for column in self.methylation_stranded(chrom,start,end):
+            if column[0].read.strand == "-":
+                for cread in column:
+                    cread.pos -= 1
+            if len(previous_column) > 0:
+                if previous_column[0].pos == column[0].pos:
+                    yield previous_column + column
+                    previous_column = []
+                    continue
+                else:
+                    yield previous_column
+                    previous_column = []
+            if column[0].read.strand == "-":
+                yield column
+            else:
+                previous_column = column
+        if len(previous_column) > 0:
+            yield previous_column
+
+    def methylation_stranded(self,chrom,start=0,end=None):
         previous_column = {}        
-        columns = self.bamfile.pileup(chrom, start, end, ignore_overlaps=True)
+        columns = self.bamfile.pileup(chrom,start,end,ignore_overlaps=True)
         for column in columns:
             if column.nsegments < self.min_depth: continue
             pos = column.reference_pos

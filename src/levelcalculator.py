@@ -35,10 +35,12 @@ class LevelCalculator:
                     unmeth+=1
             if meth+unmeth > 0:
                 level = float(meth)/float(meth+unmeth)
+                strand = cread.read.strand
+                if self.dataset.merge_strands: strand = "*"
                 yield { 
                     "chrom":cread.read.chrom, 
-                    "pos":cread.pos,
-                    "strand":cread.read.strand,
+                    "pos": cread.pos,
+                    "strand":strand,
                     "nmeth":meth,
                     "nunmeth":unmeth,
                     "meth_pct":level
