@@ -63,10 +63,12 @@ class WindowView:
         for read in reads:
             read_meth = [""]*len(positions)
             for cread in read.get_creads(self.start,self.end):
-                read_meth[positions.index(cread.pos)] = "1" if cread.is_methylated else "0"
+                idx = positions.index(cread.pos)
+                read_meth[idx] = "1" if cread.is_methylated else "0"
             meth += [read_meth]
         meth = pd.DataFrame(meth)
         meth.insert(0,"read",[read.name for read in reads])
-        return ("positions = \n " + "\n ".join([str(pos) for pos in positions])
-                + "\nmeth=\n" +  meth.to_string(header=False,index=False))
+        return (
+            "positions = \n " + "\n ".join([str(pos) for pos in positions])
+            + "\nmeth=\n" +  meth.to_string(header=False,index=False))
         
