@@ -28,7 +28,7 @@ class LevelCalculator:
         for column in iterator:
             meth = 0
             unmeth = 0
-            for cread in column:
+            for cread in column.values():
                 if cread.is_methylated:
                     meth+=1
                 else:

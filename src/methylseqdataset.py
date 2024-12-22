@@ -2,6 +2,7 @@ import pysam
 import numpy
 from .cytosineread import CytosineRead
 from .read import Read
+from .column import Column
 
 class MethylSeqDataset:
     def __init__(
@@ -39,66 +40,68 @@ class MethylSeqDataset:
             return self.methylation_unstranded(chrom,start,end)
 
     def methylation_unstranded(self,chrom,start=0,end=None):
-        previous_column = []
+        previous_column = None
         for column in self.methylation_stranded(chrom,start,end):
-            if column[0].read.strand == "-":
-                for cread in column:
+            if column.strand == "-":
+                column.pos -= 1
+                for cread in column.values():
                     cread.pos -= 1
-            if len(previous_column) > 0:
-                if previous_column[0].pos == column[0].pos:
-                    yield previous_column + column
-                    previous_column = []
+            if not previous_column is None:
+                if previous_column.pos == column.pos:
+                    column.merge(previous_column)
+                    yield column
+                    previous_column = None
                     continue
                 else:
                     yield previous_column
-                    previous_column = []
-            if column[0].read.strand == "-":
+                    previous_column = None
+            if column.strand == "-":
                 yield column
             else:
                 previous_column = column
-        if len(previous_column) > 0:
+        if not previous_column is None:
             yield previous_column
 
     def methylation_stranded(self,chrom,start=0,end=None):
-        previous_column = {}        
-        columns = self.bamfile.pileup(chrom,start,end,ignore_overlaps=True)
-        for column in columns:
-            if column.nsegments < self.min_depth: continue
-            pos = column.reference_pos
+        reads = {}
+        pileup = self.bamfile.pileup(chrom,start,end,ignore_overlaps=True)
+        for pileup_column in pileup:
+            if pileup_column.nsegments < self.min_depth: continue
+            pos = pileup_column.reference_pos
             if pos < start: continue
             if not end is None and pos > end: break
             if self.fastafile.fetch(chrom,pos,pos+2).upper() == "CG":
                 strand = "+"
-                site_reads = self.extract_site_reads(column,True)
+                site_reads = self.extract_site_reads(pileup_column,True)
             elif pos > 0 and self.fastafile.fetch(chrom,pos-1,pos+1).upper() == "CG":
                 strand = "-"
-                site_reads = self.extract_site_reads(column,False)
+                site_reads = self.extract_site_reads(pileup_column,False)
             else:
                 continue
             if len(site_reads)> 0: 
-                current = {}
+                current_column = Column(chrom,pos,strand)
                 for name in site_reads:
                     site_read = site_reads.get(name)
                     base = site_read_base(site_read)
                     baseq = site_read_base_quality(site_read)
                     is_methylated = site_read_is_methylated(site_read)
-                    if name in previous_column:
-                        read = previous_column.get(name).read
+                    if name in reads:
+                        read = reads[name]
                     else:
-                        chrom = site_read_chrom(site_read)
                         read_start = site_read_start(site_read)
                         read_end = site_read_end(site_read)
                         readq = site_read_quality(site_read)
                         read = Read(name,chrom,read_start,read_end,strand,readq)
-                    cread = CytosineRead(read,chrom,pos,base,baseq,is_methylated)
-                    read.creads.append(cread)
-                    current[read.name] = cread
-                previous_column = current
-                yield list(current.values())
+                        reads[name] = read
+                    cread = CytosineRead(read,current_column,chrom,pos,base,baseq,is_methylated)
+                for name in list(reads.keys()):
+                    if reads[name].end < pos:
+                        del reads[name]
+                yield current_column
                 
-    def extract_site_reads(self,column,is_fwd):
+    def extract_site_reads(self,pileup_column,is_fwd):
         site_reads = dict()
-        for site_read in column.pileups:
+        for site_read in pileup_column.pileups:
             if site_read.is_del or site_read.is_refskip:
                 continue
             if not self.is_good_site_read(site_read,is_fwd): 

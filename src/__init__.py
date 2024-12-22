@@ -6,3 +6,4 @@ from .concurrencecalculator import ConcurrenceCalculator
 from .camdacalculator import CAMDACalculator
 from .cytosineread import CytosineRead
 from .read import Read
+from .column import Column

@@ -19,9 +19,9 @@ class CAMDACalculator:
             meth_clones = 0
             unmeth_clones = 0
             concurrence_clones = 0
-            region_start = column[0].pos - self.size//2
+            region_start = column.pos - self.size//2
             region_end = region_start + self.size 
-            for column_cread in column:
+            for column_cread in column.values():
                 clone_meth = 0
                 clone_unmeth = 0
                 region_meth = 0
@@ -47,9 +47,9 @@ class CAMDACalculator:
                     meth_clones += 1
             number_cytosines = concurrence_cytosines + meth + unmeth
             number_clones = concurrence_clones + meth_clones + unmeth_clones
-            if number_clones > 0:
+            if number_clones > 0 and number_cytosines > 0: 
                 yield { 
-                    "chrom": column[0].chrom,
+                    "chrom": column.chrom,
                     "start": region_start,
                     "end": region_end,
                     "depth": number_clones,
@@ -73,7 +73,7 @@ class CAMDAWindow:
         pre_start = start
         iterator = self.dataset.methylation(chrom,start,end)
         for column in iterator:
-            for cread in column:
+            for cread in column.values():
                 if cread.read.start < pre_start:
                     pre_start = cread.read.start
             break
@@ -81,27 +81,25 @@ class CAMDAWindow:
         iterator = self.dataset.methylation(chrom,pre_start)
         columns = deque()
         for column in iterator:
-            if column[0].pos >= start:
+            if column.pos >= start:
                 columns.append(column)
                 break
         ## begin at first cytosine at or after start
         current_idx = 0
         while current_idx < len(columns):
-            if not end is None and columns[current_idx][0].pos > end:
+            if not end is None and columns[current_idx].pos > end:
                 break
             ## identify boundary of the current window
-            window_start = columns[current_idx][0].read.start
-            window_end = columns[current_idx][0].read.end
-            for cread in columns[current_idx]:
-                window_start = min(window_start,cread.read.start)
-                window_end = max(window_end,cread.read.end)
+            column = columns[current_idx]
+            window_start =min([cread.read.start for cread in column.values()])
+            window_end = max([cread.read.end for cread in column.values()])
             ## cover all cytosines in the window
             for column in iterator:
                 columns.append(column)
-                if column[0].pos > window_end:
+                if column.pos > window_end:
                     break
             ## remove all cytosines outside the window
-            while columns[0][0].pos < window_start:
+            while columns[0].pos < window_start:
                 columns.popleft()
                 current_idx -= 1
             yield columns[current_idx]

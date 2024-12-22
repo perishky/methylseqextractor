@@ -67,14 +67,14 @@ Here are the reads for the first CpG site.
 
 ```{python}
 sites = next(iter)
-pd.DataFrame([site.get_dict() for site in sites])
+pd.DataFrame([site.get_dict() for site in sites.values()])
 ```
 
 And the second CpG site.
 
 ```{python}
 sites = next(iter)
-pd.DataFrame([site.get_dict() for site in sites])
+pd.DataFrame([site.get_dict() for site in sites.values()])
 ```
 
 ## Calculate DNA methylation levels

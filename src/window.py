@@ -16,11 +16,10 @@ class Window:
         snap_start = start
         snap_end = start + self.size
         for column in iterator:
-            pos = column[0].pos
-            if pos > snap_end:
+            if column.pos > snap_end:
                 if len(positions) > 0:
                     yield WindowView(chrom,snap_start,snap_end,positions,reads)
-                snap_end = pos
+                snap_end = column.pos 
                 snap_start = snap_end - self.size
                 while len(positions) > 0:
                     if positions[0] < snap_start:
@@ -32,9 +31,9 @@ class Window:
                         reads.popleft()
                     else:
                         break
-            positions.append(pos)
-            for cread in column:
-                if cread.read.creads[0].pos == pos: 
+            positions.append(column.pos)
+            for cread in column.values():
+                if cread.read.creads[0].pos >= column.pos: 
                     reads.append(cread.read)
         if len(positions) > 0:
             yield WindowView(chrom,snap_start,snap_end,positions,reads)
@@ -69,6 +68,8 @@ class WindowView:
         meth = pd.DataFrame(meth)
         meth.insert(0,"read",[read.name for read in reads])
         return (
-            "positions = \n " + "\n ".join([str(pos) for pos in positions])
-            + "\nmeth=\n" +  meth.to_string(header=False,index=False))
+            "positions = \n " 
+            + "\n ".join([str(pos) for pos in positions])
+            + "\nmeth=\n" 
+            +  meth.to_string(header=False,index=False))
         
