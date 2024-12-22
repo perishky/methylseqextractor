@@ -11,54 +11,47 @@ class Window:
 
     def slide(self,chrom,start=0,end=None):
         reads = deque()
-        positions = deque()
         iterator = self.dataset.methylation(chrom,start,end)
-        snap_start = start
-        snap_end = start + self.size
+        win_start = start
+        win_end = start + self.size
         for column in iterator:
-            if column.pos > snap_end:
-                if len(positions) > 0:
-                    yield WindowView(chrom,snap_start,snap_end,positions,reads)
-                snap_end = column.pos 
-                snap_start = snap_end - self.size
-                while len(positions) > 0:
-                    if positions[0] < snap_start:
-                        positions.popleft()
-                    else:
-                        break
+            if column.pos > win_end:
+                if len(reads) > 0:
+                    yield WindowView(chrom,win_start,win_end,reads)
+                win_end = column.pos 
+                win_start = win_end - self.size
                 while len(reads) > 0:
-                    if reads[0].end < snap_start:
+                    if reads[0].end < win_start:
                         reads.popleft()
                     else:
                         break
-            positions.append(column.pos)
             for cread in column.values():
                 if cread.read.creads[0].pos >= column.pos: 
                     reads.append(cread.read)
-        if len(positions) > 0:
-            yield WindowView(chrom,snap_start,snap_end,positions,reads)
+        if len(reads) > 0:
+            yield WindowView(chrom,win_start,win_end,reads)
         
 class WindowView:
 
-    def __init__(self,chrom,start,end,positions,reads):
+    def __init__(self,chrom,start,end,reads):
         self.chrom = chrom
         self.start = start
         self.end = end
-        self.positions = positions
         self.reads = reads
 
     def get_reads(self): 
         return [read for read in self.reads \
                 if read.end >= self.start and read.start <= self.end]
 
-    def get_positions(self):
-        return [pos for pos in self.positions \
-                if pos >= self.start and pos <= self.end]
-
     def __str__(self):
-        positions = self.get_positions()
         reads = self.get_reads()
         meth = []
+        positions = set()
+        for read in reads:
+            for cread in read.get_creads(self.start,self.end):
+                positions.add(cread.pos)
+        positions = list(positions)
+        positions.sort()
         for read in reads:
             read_meth = [""]*len(positions)
             for cread in read.get_creads(self.start,self.end):

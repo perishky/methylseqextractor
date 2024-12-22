@@ -16,4 +16,3 @@ class Column(UserDict):
         assert isinstance(x, Column)
         for name,cread in x.items():
             self[name] = cread
-            cread.column = self

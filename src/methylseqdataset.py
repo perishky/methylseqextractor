@@ -93,7 +93,8 @@ class MethylSeqDataset:
                         readq = site_read_quality(site_read)
                         read = Read(name,chrom,read_start,read_end,strand,readq)
                         reads[name] = read
-                    cread = CytosineRead(read,current_column,chrom,pos,base,baseq,is_methylated)
+                    cread = CytosineRead(read,chrom,pos,base,baseq,is_methylated)
+                    current_column[name] = cread
                 for name in list(reads.keys()):
                     if reads[name].end < pos:
                         del reads[name]

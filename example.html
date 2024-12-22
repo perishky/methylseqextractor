@@ -2675,7 +2675,7 @@ vertical-align: -.125em;
 <div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sites <span class="op">=</span> <span class="bu">next</span>(<span class="bu">iter</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site.get_dict() <span class="cf">for</span> site <span class="kw">in</span> sites.values()])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="4">
+<div class="cell-output cell-output-display" data-execution_count="15">
 
 <div>
 
@@ -2804,7 +2804,7 @@ vertical-align: -.125em;
 <div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sites <span class="op">=</span> <span class="bu">next</span>(<span class="bu">iter</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site.get_dict() <span class="cf">for</span> site <span class="kw">in</span> sites.values()])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="16">
 
 <div>
 
@@ -2939,7 +2939,7 @@ vertical-align: -.125em;
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>levels <span class="op">=</span> LevelCalculator(dataset)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> levels.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
+<div class="cell-output cell-output-display" data-execution_count="17">
 
 <div>
 
@@ -3075,7 +3075,7 @@ vertical-align: -.125em;
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>levels <span class="op">=</span> LevelCalculator(dataset_stranded)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> levels.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="18">
 
 <div>
 
@@ -3337,7 +3337,7 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>flips <span class="op">=</span> ClonalFlipCounter(dataset,<span class="dv">200</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> flips.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([ region <span class="cf">for</span> region <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="9">
+<div class="cell-output cell-output-display" data-execution_count="20">
 
 <div>
 
@@ -3440,7 +3440,7 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>camda <span class="op">=</span> CAMDACalculator(dataset, <span class="dv">1</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> camda.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
+<div class="cell-output cell-output-display" data-execution_count="21">
 
 <div>
 
@@ -3644,7 +3644,7 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>concurrence <span class="op">=</span> ConcurrenceCalculator(dataset,<span class="dv">200</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> concurrence.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([region <span class="cf">for</span> region <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div class="cell-output cell-output-display" data-execution_count="22">
 
 <div>
 
