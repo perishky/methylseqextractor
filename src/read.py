@@ -13,9 +13,9 @@ class Read:
         else:
             creads = self.creads
             if not start is None:
-                creads = [cread for cread in creads if cread.pos >= start]
+                creads = [cread for cread in creads if cread.pos > start-1]
             if not end is None:
-                creads = [cread for cread in creads if cread.pos <= end]
+                creads = [cread for cread in creads if cread.pos < end]
             return creads
     def get_dict(self):
         return {
@@ -25,3 +25,5 @@ class Read:
             "end": self.end,
             "strand": self.strand
         }
+    def __str__(self):
+        return str(self.get_dict())

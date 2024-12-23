@@ -27,7 +27,7 @@ class CAMDACalculator:
                 region_meth = 0
                 region_unmeth = 0
                 for cread in column_cread.read.creads:
-                    in_region = cread.pos >= region_start \
+                    in_region = cread.pos > region_start-1 \
                                 and cread.pos < region_end
                     if cread.is_methylated:
                         clone_meth += 1
@@ -81,13 +81,13 @@ class CAMDAWindow:
         iterator = self.dataset.methylation(chrom,pre_start)
         columns = deque()
         for column in iterator:
-            if column.pos >= start:
+            if column.pos > start-1:
                 columns.append(column)
                 break
         ## begin at first cytosine at or after start
         current_idx = 0
         while current_idx < len(columns):
-            if not end is None and columns[current_idx].pos > end:
+            if not end is None and columns[current_idx].pos > end-1:
                 break
             ## identify boundary of the current window
             column = columns[current_idx]
@@ -96,7 +96,7 @@ class CAMDAWindow:
             ## cover all cytosines in the window
             for column in iterator:
                 columns.append(column)
-                if column.pos > window_end:
+                if column.pos > window_end-1:
                     break
             ## remove all cytosines outside the window
             while columns[0].pos < window_start:

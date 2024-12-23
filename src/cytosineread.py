@@ -16,6 +16,10 @@ class CytosineRead:
             "read": self.read.name,
             "chrom": self.chrom, 
             "pos": self.pos, 
+            "strand": self.read.strand,
             "base": self.base, 
             "is_methylated": self.is_methylated
         }
+
+    def __str__(self):
+        return str(self.get_dict())

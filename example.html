@@ -2675,7 +2675,7 @@ vertical-align: -.125em;
 <div class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>sites <span class="op">=</span> <span class="bu">next</span>(<span class="bu">iter</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site.get_dict() <span class="cf">for</span> site <span class="kw">in</span> sites.values()])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
+<div class="cell-output cell-output-display" data-execution_count="4">
 
 <div>
 
@@ -2686,6 +2686,7 @@ vertical-align: -.125em;
       <th>read</th>
       <th>chrom</th>
       <th>pos</th>
+      <th>strand</th>
       <th>base</th>
       <th>is_methylated</th>
     </tr>
@@ -2693,105 +2694,118 @@ vertical-align: -.125em;
   <tbody>
     <tr>
       <th>0</th>
-      <td>M04360:9:000000000-LH9RH:1:2109:6257:10400</td>
+      <td>M04360:9:000000000-LH9RH:1:2109:6257:10400-chr...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>M04360:9:000000000-LH9RH:1:1108:22978:8011</td>
+      <td>M04360:9:000000000-LH9RH:1:1108:22978:8011-chr...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>M04360:9:000000000-LH9RH:1:2108:13140:14703</td>
+      <td>M04360:9:000000000-LH9RH:1:2108:13140:14703-ch...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>T</td>
       <td>False</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>M04360:9:000000000-LH9RH:1:1104:27291:19899</td>
+      <td>M04360:9:000000000-LH9RH:1:1104:27291:19899-ch...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>M04360:9:000000000-LH9RH:1:2109:8720:15145</td>
+      <td>M04360:9:000000000-LH9RH:1:2109:8720:15145-chr...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>5</th>
-      <td>M04360:9:000000000-LH9RH:1:1113:21933:16063</td>
+      <td>M04360:9:000000000-LH9RH:1:1113:21933:16063-ch...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>6</th>
-      <td>M04360:9:000000000-LH9RH:1:1113:21659:4980</td>
+      <td>M04360:9:000000000-LH9RH:1:1113:21659:4980-chr...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>7</th>
-      <td>M04360:9:000000000-LH9RH:1:2105:9102:26149</td>
+      <td>M04360:9:000000000-LH9RH:1:2105:9102:26149-chr...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>8</th>
-      <td>M04360:9:000000000-LH9RH:1:1101:14153:6435</td>
+      <td>M04360:9:000000000-LH9RH:1:1101:14153:6435-chr...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>9</th>
-      <td>M04360:9:000000000-LH9RH:1:1106:16059:21370</td>
+      <td>M04360:9:000000000-LH9RH:1:1106:16059:21370-ch...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>10</th>
-      <td>M04360:9:000000000-LH9RH:1:1103:25962:11196</td>
+      <td>M04360:9:000000000-LH9RH:1:1103:25962:11196-ch...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>11</th>
-      <td>M04360:9:000000000-LH9RH:1:1102:20972:21943</td>
+      <td>M04360:9:000000000-LH9RH:1:1102:20972:21943-ch...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>12</th>
-      <td>M04360:9:000000000-LH9RH:1:2106:26111:14092</td>
+      <td>M04360:9:000000000-LH9RH:1:2106:26111:14092-ch...</td>
       <td>chr1</td>
       <td>1245146</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
@@ -2804,7 +2818,7 @@ vertical-align: -.125em;
 <div class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>sites <span class="op">=</span> <span class="bu">next</span>(<span class="bu">iter</span>)</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site.get_dict() <span class="cf">for</span> site <span class="kw">in</span> sites.values()])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="16">
+<div class="cell-output cell-output-display" data-execution_count="5">
 
 <div>
 
@@ -2815,6 +2829,7 @@ vertical-align: -.125em;
       <th>read</th>
       <th>chrom</th>
       <th>pos</th>
+      <th>strand</th>
       <th>base</th>
       <th>is_methylated</th>
     </tr>
@@ -2822,105 +2837,118 @@ vertical-align: -.125em;
   <tbody>
     <tr>
       <th>0</th>
-      <td>M04360:9:000000000-LH9RH:1:2109:6257:10400</td>
+      <td>M04360:9:000000000-LH9RH:1:2109:6257:10400-chr...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>1</th>
-      <td>M04360:9:000000000-LH9RH:1:1108:22978:8011</td>
+      <td>M04360:9:000000000-LH9RH:1:1108:22978:8011-chr...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>2</th>
-      <td>M04360:9:000000000-LH9RH:1:2108:13140:14703</td>
+      <td>M04360:9:000000000-LH9RH:1:2108:13140:14703-ch...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>T</td>
       <td>False</td>
     </tr>
     <tr>
       <th>3</th>
-      <td>M04360:9:000000000-LH9RH:1:1104:27291:19899</td>
+      <td>M04360:9:000000000-LH9RH:1:1104:27291:19899-ch...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>4</th>
-      <td>M04360:9:000000000-LH9RH:1:2109:8720:15145</td>
+      <td>M04360:9:000000000-LH9RH:1:2109:8720:15145-chr...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>T</td>
       <td>False</td>
     </tr>
     <tr>
       <th>5</th>
-      <td>M04360:9:000000000-LH9RH:1:1113:21933:16063</td>
+      <td>M04360:9:000000000-LH9RH:1:1113:21933:16063-ch...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>6</th>
-      <td>M04360:9:000000000-LH9RH:1:1113:21659:4980</td>
+      <td>M04360:9:000000000-LH9RH:1:1113:21659:4980-chr...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>7</th>
-      <td>M04360:9:000000000-LH9RH:1:2105:9102:26149</td>
+      <td>M04360:9:000000000-LH9RH:1:2105:9102:26149-chr...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>8</th>
-      <td>M04360:9:000000000-LH9RH:1:1101:14153:6435</td>
+      <td>M04360:9:000000000-LH9RH:1:1101:14153:6435-chr...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>9</th>
-      <td>M04360:9:000000000-LH9RH:1:1106:16059:21370</td>
+      <td>M04360:9:000000000-LH9RH:1:1106:16059:21370-ch...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>T</td>
       <td>False</td>
     </tr>
     <tr>
       <th>10</th>
-      <td>M04360:9:000000000-LH9RH:1:1103:25962:11196</td>
+      <td>M04360:9:000000000-LH9RH:1:1103:25962:11196-ch...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>11</th>
-      <td>M04360:9:000000000-LH9RH:1:1102:20972:21943</td>
+      <td>M04360:9:000000000-LH9RH:1:1102:20972:21943-ch...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
     <tr>
       <th>12</th>
-      <td>M04360:9:000000000-LH9RH:1:2106:26111:14092</td>
+      <td>M04360:9:000000000-LH9RH:1:2106:26111:14092-ch...</td>
       <td>chr1</td>
       <td>1245152</td>
+      <td>+</td>
       <td>C</td>
       <td>True</td>
     </tr>
@@ -2939,7 +2967,7 @@ vertical-align: -.125em;
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>levels <span class="op">=</span> LevelCalculator(dataset)</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> levels.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="17">
+<div class="cell-output cell-output-display" data-execution_count="6">
 
 <div>
 
@@ -3075,7 +3103,7 @@ vertical-align: -.125em;
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>levels <span class="op">=</span> LevelCalculator(dataset_stranded)</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> levels.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="18">
+<div class="cell-output cell-output-display" data-execution_count="7">
 
 <div>
 
@@ -3243,7 +3271,8 @@ vertical-align: -.125em;
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">next</span>(<span class="bu">iter</span>)) <span class="co">## first window position</span></span>
 <span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(<span class="bu">next</span>(<span class="bu">iter</span>)) <span class="co">## second window position</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>positions = 
+<pre><code>chrom = chr1:1245000-1245200
+positions = 
  1245146
  1245152
  1245159
@@ -3253,35 +3282,36 @@ vertical-align: -.125em;
  1245175
  1245183
 meth=
- M04360:9:000000000-LH9RH:1:2109:6257:10400 1 1 0 0 1 1 0 1
- M04360:9:000000000-LH9RH:1:1108:22978:8011 1 1 1 1 1 1 1 1
-M04360:9:000000000-LH9RH:1:2108:13140:14703 0 0 0 1 0 1 0 0
-M04360:9:000000000-LH9RH:1:1104:27291:19899 1 1 1 1 1 1 1 1
- M04360:9:000000000-LH9RH:1:2109:8720:15145 1 0 1 1 1 1 1 1
-M04360:9:000000000-LH9RH:1:1113:21933:16063 1 1 1 1 1 1 1 1
- M04360:9:000000000-LH9RH:1:1113:21659:4980 1 1 0 1 1 1 0 1
- M04360:9:000000000-LH9RH:1:2105:9102:26149 1 1 1 1 1 1 1 1
- M04360:9:000000000-LH9RH:1:1101:14153:6435 1 1 0 0 0 0 1 1
-M04360:9:000000000-LH9RH:1:1106:16059:21370 1 0 1 1 1 0 1 1
-M04360:9:000000000-LH9RH:1:1103:25962:11196 1 1 1 1 1 1 0 1
-M04360:9:000000000-LH9RH:1:1102:20972:21943 1 1 1 1 1 1 1 1
-M04360:9:000000000-LH9RH:1:2106:26111:14092 1 1 1 1 1 1 1 1
-M04360:9:000000000-LH9RH:1:2108:14423:18242     1 1 1 1 1 1
- M04360:9:000000000-LH9RH:1:1111:5928:17210         1 1 1 1
- M04360:9:000000000-LH9RH:1:2106:7286:15502           1 1 1
-M04360:9:000000000-LH9RH:1:1114:19652:21948           1 1 1
- M04360:9:000000000-LH9RH:1:2106:24467:9394             1 1
- M04360:9:000000000-LH9RH:1:1109:21086:9700               1
- M04360:9:000000000-LH9RH:1:1111:6708:24481               1
-M04360:9:000000000-LH9RH:1:2112:14689:24809               1
-M04360:9:000000000-LH9RH:1:2110:16556:23610               1
- M04360:9:000000000-LH9RH:1:2113:15099:9887               1
-M04360:9:000000000-LH9RH:1:1111:18609:17222               1
-M04360:9:000000000-LH9RH:1:1104:23237:20825               1
- M04360:9:000000000-LH9RH:1:2103:8626:17478               1
- M04360:9:000000000-LH9RH:1:1104:15610:9458               1
-M04360:9:000000000-LH9RH:1:1106:27314:22621               0
- M04360:9:000000000-LH9RH:1:1107:7101:15186               1
+ M04360:9:000000000-LH9RH:1:2109:6257:10400-chr1:1245035-1245285+ 1 1 0 0 1 1 0 1
+ M04360:9:000000000-LH9RH:1:1108:22978:8011-chr1:1245037-1245287+ 1 1 1 1 1 1 1 1
+M04360:9:000000000-LH9RH:1:2108:13140:14703-chr1:1245041-1245291+ 0 0 0 1 0 1 0 0
+M04360:9:000000000-LH9RH:1:1104:27291:19899-chr1:1245068-1245319+ 1 1 1 1 1 1 1 1
+ M04360:9:000000000-LH9RH:1:2109:8720:15145-chr1:1245079-1245329+ 1 0 1 1 1 1 1 1
+M04360:9:000000000-LH9RH:1:1113:21933:16063-chr1:1245100-1245266+ 1 1 1 1 1 1 1 1
+ M04360:9:000000000-LH9RH:1:1113:21659:4980-chr1:1245123-1245267+ 1 1 0 1 1 1 0 1
+ M04360:9:000000000-LH9RH:1:2105:9102:26149-chr1:1245125-1245373+ 1 1 1 1 1 1 1 1
+ M04360:9:000000000-LH9RH:1:1101:14153:6435-chr1:1245134-1245381+ 1 1 0 0 0 0 1 1
+M04360:9:000000000-LH9RH:1:1106:16059:21370-chr1:1245136-1245257+ 1 0 1 1 1 0 1 1
+M04360:9:000000000-LH9RH:1:1103:25962:11196-chr1:1245142-1245278+ 1 1 1 1 1 1 0 1
+M04360:9:000000000-LH9RH:1:1102:20972:21943-chr1:1245146-1245259+ 1 1 1 1 1 1 1 1
+M04360:9:000000000-LH9RH:1:2106:26111:14092-chr1:1245146-1245370+ 1 1 1 1 1 1 1 1
+M04360:9:000000000-LH9RH:1:2108:14423:18242-chr1:1245154-1245405+     1 1 1 1 1 1
+ M04360:9:000000000-LH9RH:1:1111:5928:17210-chr1:1245164-1245413+         1 1 1 1
+ M04360:9:000000000-LH9RH:1:2106:7286:15502-chr1:1245169-1245418+           1 1 1
+M04360:9:000000000-LH9RH:1:1114:19652:21948-chr1:1245170-1245271+           1 1 1
+ M04360:9:000000000-LH9RH:1:2106:24467:9394-chr1:1245173-1245363+             1 1
+ M04360:9:000000000-LH9RH:1:1109:21086:9700-chr1:1245000-1245251-               1
+ M04360:9:000000000-LH9RH:1:1111:6708:24481-chr1:1245026-1245263-               1
+M04360:9:000000000-LH9RH:1:2112:14689:24809-chr1:1245075-1245324-               1
+M04360:9:000000000-LH9RH:1:2110:16556:23610-chr1:1245082-1245240-               1
+ M04360:9:000000000-LH9RH:1:2113:15099:9887-chr1:1245098-1245335-               1
+M04360:9:000000000-LH9RH:1:1111:18609:17222-chr1:1245106-1245342-               1
+M04360:9:000000000-LH9RH:1:1104:23237:20825-chr1:1245153-1245404-               1
+ M04360:9:000000000-LH9RH:1:2103:8626:17478-chr1:1245159-1245380-               1
+ M04360:9:000000000-LH9RH:1:1104:15610:9458-chr1:1245165-1245385-               1
+M04360:9:000000000-LH9RH:1:1106:27314:22621-chr1:1245184-1245376-               0
+ M04360:9:000000000-LH9RH:1:1107:7101:15186-chr1:1245183-1245292+               1
+chrom = chr1:1245021-1245220
 positions = 
  1245146
  1245152
@@ -3293,39 +3323,40 @@ positions =
  1245183
  1245219
 meth=
- M04360:9:000000000-LH9RH:1:2109:6257:10400 1 1 0 0 1 1 0 1 0
- M04360:9:000000000-LH9RH:1:1108:22978:8011 1 1 1 1 1 1 1 1 1
-M04360:9:000000000-LH9RH:1:2108:13140:14703 0 0 0 1 0 1 0 0 1
-M04360:9:000000000-LH9RH:1:1104:27291:19899 1 1 1 1 1 1 1 1 1
- M04360:9:000000000-LH9RH:1:2109:8720:15145 1 0 1 1 1 1 1 1 1
-M04360:9:000000000-LH9RH:1:1113:21933:16063 1 1 1 1 1 1 1 1 0
- M04360:9:000000000-LH9RH:1:1113:21659:4980 1 1 0 1 1 1 0 1 1
- M04360:9:000000000-LH9RH:1:2105:9102:26149 1 1 1 1 1 1 1 1 1
- M04360:9:000000000-LH9RH:1:1101:14153:6435 1 1 0 0 0 0 1 1 1
-M04360:9:000000000-LH9RH:1:1106:16059:21370 1 0 1 1 1 0 1 1 0
-M04360:9:000000000-LH9RH:1:1103:25962:11196 1 1 1 1 1 1 0 1 1
-M04360:9:000000000-LH9RH:1:1102:20972:21943 1 1 1 1 1 1 1 1 1
-M04360:9:000000000-LH9RH:1:2106:26111:14092 1 1 1 1 1 1 1 1 1
-M04360:9:000000000-LH9RH:1:2108:14423:18242     1 1 1 1 1 1 1
- M04360:9:000000000-LH9RH:1:1111:5928:17210         1 1 1 1 0
- M04360:9:000000000-LH9RH:1:2106:7286:15502           1 1 1 1
-M04360:9:000000000-LH9RH:1:1114:19652:21948           1 1 1 1
- M04360:9:000000000-LH9RH:1:2106:24467:9394             1 1 1
- M04360:9:000000000-LH9RH:1:1109:21086:9700               1 1
- M04360:9:000000000-LH9RH:1:1111:6708:24481               1 1
-M04360:9:000000000-LH9RH:1:2112:14689:24809               1 1
-M04360:9:000000000-LH9RH:1:2110:16556:23610               1 1
- M04360:9:000000000-LH9RH:1:2113:15099:9887               1  
-M04360:9:000000000-LH9RH:1:1111:18609:17222               1 1
-M04360:9:000000000-LH9RH:1:1104:23237:20825               1 1
- M04360:9:000000000-LH9RH:1:2103:8626:17478               1 1
- M04360:9:000000000-LH9RH:1:1104:15610:9458               1 1
-M04360:9:000000000-LH9RH:1:1106:27314:22621               0 1
- M04360:9:000000000-LH9RH:1:1107:7101:15186               1 1
- M04360:9:000000000-LH9RH:1:2106:20264:8905                 1
- M04360:9:000000000-LH9RH:1:1112:17989:1584                 1
-M04360:9:000000000-LH9RH:1:2110:19666:16827                 1
-M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
+ M04360:9:000000000-LH9RH:1:2109:6257:10400-chr1:1245035-1245285+ 1 1 0 0 1 1 0 1 0
+ M04360:9:000000000-LH9RH:1:1108:22978:8011-chr1:1245037-1245287+ 1 1 1 1 1 1 1 1 1
+M04360:9:000000000-LH9RH:1:2108:13140:14703-chr1:1245041-1245291+ 0 0 0 1 0 1 0 0 1
+M04360:9:000000000-LH9RH:1:1104:27291:19899-chr1:1245068-1245319+ 1 1 1 1 1 1 1 1 1
+ M04360:9:000000000-LH9RH:1:2109:8720:15145-chr1:1245079-1245329+ 1 0 1 1 1 1 1 1 1
+M04360:9:000000000-LH9RH:1:1113:21933:16063-chr1:1245100-1245266+ 1 1 1 1 1 1 1 1 0
+ M04360:9:000000000-LH9RH:1:1113:21659:4980-chr1:1245123-1245267+ 1 1 0 1 1 1 0 1 1
+ M04360:9:000000000-LH9RH:1:2105:9102:26149-chr1:1245125-1245373+ 1 1 1 1 1 1 1 1 1
+ M04360:9:000000000-LH9RH:1:1101:14153:6435-chr1:1245134-1245381+ 1 1 0 0 0 0 1 1 1
+M04360:9:000000000-LH9RH:1:1106:16059:21370-chr1:1245136-1245257+ 1 0 1 1 1 0 1 1 0
+M04360:9:000000000-LH9RH:1:1103:25962:11196-chr1:1245142-1245278+ 1 1 1 1 1 1 0 1 1
+M04360:9:000000000-LH9RH:1:1102:20972:21943-chr1:1245146-1245259+ 1 1 1 1 1 1 1 1 1
+M04360:9:000000000-LH9RH:1:2106:26111:14092-chr1:1245146-1245370+ 1 1 1 1 1 1 1 1 1
+M04360:9:000000000-LH9RH:1:2108:14423:18242-chr1:1245154-1245405+     1 1 1 1 1 1 1
+ M04360:9:000000000-LH9RH:1:1111:5928:17210-chr1:1245164-1245413+         1 1 1 1  
+ M04360:9:000000000-LH9RH:1:2106:7286:15502-chr1:1245169-1245418+           1 1 1 1
+M04360:9:000000000-LH9RH:1:1114:19652:21948-chr1:1245170-1245271+           1 1 1 1
+ M04360:9:000000000-LH9RH:1:2106:24467:9394-chr1:1245173-1245363+             1 1 1
+ M04360:9:000000000-LH9RH:1:1109:21086:9700-chr1:1245000-1245251-               1 1
+ M04360:9:000000000-LH9RH:1:1111:6708:24481-chr1:1245026-1245263-               1 1
+M04360:9:000000000-LH9RH:1:2112:14689:24809-chr1:1245075-1245324-               1 1
+M04360:9:000000000-LH9RH:1:2110:16556:23610-chr1:1245082-1245240-               1 1
+ M04360:9:000000000-LH9RH:1:2113:15099:9887-chr1:1245098-1245335-               1  
+M04360:9:000000000-LH9RH:1:1111:18609:17222-chr1:1245106-1245342-               1 1
+M04360:9:000000000-LH9RH:1:1104:23237:20825-chr1:1245153-1245404-               1 1
+ M04360:9:000000000-LH9RH:1:2103:8626:17478-chr1:1245159-1245380-               1 1
+ M04360:9:000000000-LH9RH:1:1104:15610:9458-chr1:1245165-1245385-               1 1
+M04360:9:000000000-LH9RH:1:1106:27314:22621-chr1:1245184-1245376-               0 1
+ M04360:9:000000000-LH9RH:1:1107:7101:15186-chr1:1245183-1245292+               1 1
+ M04360:9:000000000-LH9RH:1:2106:20264:8905-chr1:1245196-1245351-                 1
+ M04360:9:000000000-LH9RH:1:1112:17989:1584-chr1:1245200-1245439-                 1
+M04360:9:000000000-LH9RH:1:2110:19666:16827-chr1:1245201-1245398-                 1
+M04360:9:000000000-LH9RH:1:1103:25357:11898-chr1:1245186-1245423+                 1
+ M04360:9:000000000-LH9RH:1:1111:5928:17210-chr1:1245218-1245468+                 0</code></pre>
 </div>
 </div>
 </section>
@@ -3337,7 +3368,7 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>flips <span class="op">=</span> ClonalFlipCounter(dataset,<span class="dv">200</span>)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> flips.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([ region <span class="cf">for</span> region <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="20">
+<div class="cell-output cell-output-display" data-execution_count="9">
 
 <div>
 
@@ -3372,11 +3403,11 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
     <tr>
       <th>1</th>
       <td>chr1</td>
-      <td>1245019</td>
-      <td>1245219</td>
-      <td>28</td>
-      <td>132</td>
-      <td>0.212121</td>
+      <td>1245021</td>
+      <td>1245220</td>
+      <td>27</td>
+      <td>131</td>
+      <td>0.206107</td>
       <td>141</td>
       <td>24</td>
       <td>0.854545</td>
@@ -3384,11 +3415,11 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
     <tr>
       <th>2</th>
       <td>chr1</td>
-      <td>1245072</td>
-      <td>1245272</td>
-      <td>32</td>
-      <td>157</td>
-      <td>0.203822</td>
+      <td>1245074</td>
+      <td>1245273</td>
+      <td>31</td>
+      <td>155</td>
+      <td>0.200000</td>
       <td>163</td>
       <td>28</td>
       <td>0.853403</td>
@@ -3396,11 +3427,11 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
     <tr>
       <th>3</th>
       <td>chr1</td>
-      <td>1245122</td>
-      <td>1245322</td>
-      <td>32</td>
-      <td>168</td>
-      <td>0.190476</td>
+      <td>1245124</td>
+      <td>1245323</td>
+      <td>31</td>
+      <td>166</td>
+      <td>0.186747</td>
       <td>174</td>
       <td>28</td>
       <td>0.861386</td>
@@ -3408,11 +3439,11 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
     <tr>
       <th>4</th>
       <td>chr1</td>
-      <td>1245137</td>
-      <td>1245337</td>
-      <td>32</td>
-      <td>178</td>
-      <td>0.179775</td>
+      <td>1245139</td>
+      <td>1245338</td>
+      <td>31</td>
+      <td>175</td>
+      <td>0.177143</td>
       <td>184</td>
       <td>28</td>
       <td>0.867925</td>
@@ -3440,7 +3471,7 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>camda <span class="op">=</span> CAMDACalculator(dataset, <span class="dv">1</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> camda.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([site <span class="cf">for</span> site <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="21">
+<div class="cell-output cell-output-display" data-execution_count="10">
 
 <div>
 
@@ -3526,9 +3557,9 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
       <td>15</td>
       <td>2</td>
       <td>0.133333</td>
-      <td>10</td>
-      <td>5</td>
-      <td>0.666667</td>
+      <td>9</td>
+      <td>6</td>
+      <td>0.600000</td>
       <td>13</td>
       <td>0.866667</td>
     </tr>
@@ -3540,9 +3571,9 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
       <td>17</td>
       <td>2</td>
       <td>0.117647</td>
-      <td>10</td>
-      <td>7</td>
-      <td>0.588235</td>
+      <td>9</td>
+      <td>8</td>
+      <td>0.529412</td>
       <td>15</td>
       <td>0.882353</td>
     </tr>
@@ -3554,9 +3585,9 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
       <td>18</td>
       <td>4</td>
       <td>0.222222</td>
-      <td>10</td>
-      <td>8</td>
-      <td>0.555556</td>
+      <td>9</td>
+      <td>9</td>
+      <td>0.500000</td>
       <td>14</td>
       <td>0.777778</td>
     </tr>
@@ -3568,9 +3599,9 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
       <td>29</td>
       <td>2</td>
       <td>0.068966</td>
-      <td>11</td>
-      <td>18</td>
-      <td>0.379310</td>
+      <td>10</td>
+      <td>19</td>
+      <td>0.344828</td>
       <td>27</td>
       <td>0.931034</td>
     </tr>
@@ -3644,7 +3675,7 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>concurrence <span class="op">=</span> ConcurrenceCalculator(dataset,<span class="dv">200</span>)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="bu">iter</span> <span class="op">=</span> concurrence.calculate(<span class="st">&quot;chr1&quot;</span>, <span class="dv">1245000</span>, <span class="dv">1246000</span>)</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>pd.DataFrame([region <span class="cf">for</span> region <span class="kw">in</span> <span class="bu">iter</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="22">
+<div class="cell-output cell-output-display" data-execution_count="11">
 
 <div>
 
@@ -3681,54 +3712,54 @@ M04360:9:000000000-LH9RH:1:1103:25357:11898                 1</code></pre>
     <tr>
       <th>1</th>
       <td>chr1</td>
-      <td>1245019</td>
-      <td>1245219</td>
+      <td>1245021</td>
+      <td>1245220</td>
       <td>28</td>
-      <td>24</td>
-      <td>0.150000</td>
-      <td>10</td>
-      <td>0.357143</td>
+      <td>23</td>
+      <td>0.144654</td>
+      <td>9</td>
+      <td>0.321429</td>
       <td>136</td>
-      <td>0.739130</td>
+      <td>0.747253</td>
     </tr>
     <tr>
       <th>2</th>
       <td>chr1</td>
-      <td>1245072</td>
-      <td>1245272</td>
-      <td>33</td>
+      <td>1245074</td>
+      <td>1245273</td>
+      <td>34</td>
       <td>28</td>
-      <td>0.147368</td>
+      <td>0.148148</td>
       <td>11</td>
-      <td>0.333333</td>
-      <td>162</td>
-      <td>0.743119</td>
+      <td>0.323529</td>
+      <td>161</td>
+      <td>0.741935</td>
     </tr>
     <tr>
       <th>3</th>
       <td>chr1</td>
-      <td>1245122</td>
-      <td>1245322</td>
-      <td>34</td>
+      <td>1245124</td>
+      <td>1245323</td>
+      <td>36</td>
       <td>28</td>
       <td>0.138614</td>
       <td>11</td>
-      <td>0.323529</td>
+      <td>0.305556</td>
       <td>174</td>
       <td>0.756522</td>
     </tr>
     <tr>
       <th>4</th>
       <td>chr1</td>
-      <td>1245137</td>
-      <td>1245337</td>
-      <td>34</td>
+      <td>1245139</td>
+      <td>1245338</td>
+      <td>36</td>
       <td>28</td>
-      <td>0.132075</td>
+      <td>0.132701</td>
       <td>11</td>
-      <td>0.323529</td>
-      <td>184</td>
-      <td>0.766667</td>
+      <td>0.305556</td>
+      <td>183</td>
+      <td>0.765690</td>
     </tr>
   </tbody>
 </table>

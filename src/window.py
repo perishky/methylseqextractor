@@ -15,18 +15,18 @@ class Window:
         win_start = start
         win_end = start + self.size
         for column in iterator:
-            if column.pos > win_end:
+            if column.pos > win_end-1:
                 if len(reads) > 0:
                     yield WindowView(chrom,win_start,win_end,reads)
-                win_end = column.pos 
-                win_start = win_end - self.size
+                win_end = column.pos+1 
+                win_start = win_end - self.size + 1
                 while len(reads) > 0:
-                    if reads[0].end < win_start:
-                        reads.popleft()
+                    if reads[0].end < win_start+1:
+                        read = reads.popleft()
                     else:
                         break
             for cread in column.values():
-                if cread.read.creads[0].pos >= column.pos: 
+                if cread.read.creads[0].pos > column.pos-1: 
                     reads.append(cread.read)
         if len(reads) > 0:
             yield WindowView(chrom,win_start,win_end,reads)
@@ -41,7 +41,7 @@ class WindowView:
 
     def get_reads(self): 
         return [read for read in self.reads \
-                if read.end >= self.start and read.start <= self.end]
+                if read.end > self.start and read.start < self.end]
 
     def __str__(self):
         reads = self.get_reads()
@@ -61,7 +61,9 @@ class WindowView:
         meth = pd.DataFrame(meth)
         meth.insert(0,"read",[read.name for read in reads])
         return (
-            "positions = \n " 
+            "chrom = " + self.chrom 
+            + ":" + str(self.start) + "-" + str(self.end) 
+            + "\npositions = \n " 
             + "\n ".join([str(pos) for pos in positions])
             + "\nmeth=\n" 
             +  meth.to_string(header=False,index=False))

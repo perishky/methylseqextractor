@@ -41,11 +41,16 @@ class MethylSeqDataset:
 
     def methylation_unstranded(self,chrom,start=0,end=None):
         previous_column = None
-        for column in self.methylation_stranded(chrom,start,end):
+        shifted_end = end
+        if not shifted_end is None: 
+            shifted_end += 1
+        for column in self.methylation_stranded(chrom,start,shifted_end):
             if column.strand == "-":
                 column.pos -= 1
                 for cread in column.values():
                     cread.pos -= 1
+                    if cread.read.start > cread.pos:
+                        cread.read.start = cread.pos
             if not previous_column is None:
                 if previous_column.pos == column.pos:
                     column.merge(previous_column)
@@ -59,7 +64,7 @@ class MethylSeqDataset:
                 yield column
             else:
                 previous_column = column
-        if not previous_column is None:
+        if not previous_column is None and previous_column.pos < end:
             yield previous_column
 
     def methylation_stranded(self,chrom,start=0,end=None):
@@ -69,7 +74,7 @@ class MethylSeqDataset:
             if pileup_column.nsegments < self.min_depth: continue
             pos = pileup_column.reference_pos
             if pos < start: continue
-            if not end is None and pos > end: break
+            if not end is None and pos > end-1: break
             if self.fastafile.fetch(chrom,pos,pos+2).upper() == "CG":
                 strand = "+"
                 site_reads = self.extract_site_reads(pileup_column,True)
@@ -78,27 +83,28 @@ class MethylSeqDataset:
                 site_reads = self.extract_site_reads(pileup_column,False)
             else:
                 continue
-            if len(site_reads)> 0: 
-                current_column = Column(chrom,pos,strand)
-                for name in site_reads:
-                    site_read = site_reads.get(name)
-                    base = site_read_base(site_read)
-                    baseq = site_read_base_quality(site_read)
-                    is_methylated = site_read_is_methylated(site_read)
-                    if name in reads:
-                        read = reads[name]
-                    else:
-                        read_start = site_read_start(site_read)
-                        read_end = site_read_end(site_read)
-                        readq = site_read_quality(site_read)
-                        read = Read(name,chrom,read_start,read_end,strand,readq)
-                        reads[name] = read
-                    cread = CytosineRead(read,chrom,pos,base,baseq,is_methylated)
-                    current_column[name] = cread
-                for name in list(reads.keys()):
-                    if reads[name].end < pos:
-                        del reads[name]
-                yield current_column
+            if len(site_reads) == 0: 
+                continue
+            current_column = Column(chrom,pos,strand)
+            for name in site_reads:
+                site_read = site_reads[name]
+                base = site_read_base(site_read)
+                baseq = site_read_base_quality(site_read)
+                is_methylated = site_read_is_methylated(site_read)
+                if name in reads:
+                    read = reads[name]
+                else:
+                    read_start = site_read_start(site_read)
+                    read_end = site_read_end(site_read)
+                    readq = site_read_quality(site_read)
+                    read = Read(name,chrom,read_start,read_end,strand,readq)
+                    reads[name] = read
+                cread = CytosineRead(read,chrom,pos,base,baseq,is_methylated)
+                current_column[name] = cread
+            for name in list(reads.keys()):
+                if reads[name].end < pos+1:
+                    del reads[name]
+            yield current_column
                 
     def extract_site_reads(self,pileup_column,is_fwd):
         site_reads = dict()
@@ -107,13 +113,10 @@ class MethylSeqDataset:
                 continue
             if not self.is_good_site_read(site_read,is_fwd): 
                 continue
-            previous = site_reads.get(site_read_name(site_read))
-            if not previous is None:
-                previous_baseq = site_read_base_quality(previous)
-                current_baseq = site_read_base_quality(site_read)
-                if previous_baseq > current_baseq:
-                    continue
-            site_reads[site_read.alignment.query_name] = site_read
+            name = site_read_name(site_read,is_fwd)
+            if name in site_reads:
+                raise Exception("colliding read id: " + name)
+            site_reads[name] = site_read
         if len(site_reads) < self.min_depth:
             return {}
         return site_reads
@@ -129,9 +132,15 @@ class MethylSeqDataset:
             and is_strand_consistent(site_read,is_fwd) \
             and not site_read_methylation_call(site_read) is None
 
-def site_read_name(site_read):
+def site_read_name(site_read,is_fwd):
     assert isinstance(site_read, pysam.PileupRead)
-    return site_read.alignment.query_name
+    strand = "+" if is_fwd else "-"
+    return (
+        site_read.alignment.query_name 
+        + "-" + str(site_read.alignment.reference_name)
+        + ":" + str(site_read.alignment.reference_start)
+        + "-" + str(site_read.alignment.reference_end)
+        + strand)
 
 def site_read_chrom(site_read):
     assert isinstance(site_read, pysam.PileupRead)
