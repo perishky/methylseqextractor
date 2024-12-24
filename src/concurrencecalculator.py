@@ -36,7 +36,7 @@ class ConcurrenceCalculator:
           - nunmeth: number of unmethylated CpG sites in the view
           - meth_pct: percentage of CpG sites methylated in the view
         """
-         for view in self.window.slide(chrom,start,end):
+        for view in self.window.slide(chrom,start,end):
             concurrence = 0
             meth = 0
             unmeth = 0
