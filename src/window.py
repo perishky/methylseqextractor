@@ -4,13 +4,31 @@ import pandas as pd
 from .methylseqdataset import MethylSeqDataset
 
 class Window:
+    """
+    Sliding window providing view of the DNA methylation statuses
+    of CpG sites in reads across a specified genomic region
+    """
     def __init__(self,dataset,size,min_depth=10):
+        """
+        arguments:
+        - dataset: type MethylSeqDataset
+        - size: size of window view (basepairs)
+        - min_depth: minimum number of reads in any reported window view
+        """
         assert isinstance(dataset,MethylSeqDataset)
         self.dataset = dataset
         self.size = size
         self.min_depth = min_depth
 
     def slide(self,chrom,start=0,end=None):
+        """
+        Slide the window across the 
+
+        arguments:
+        - chrom,start,end: genomic region across which to slide the window
+
+        returns: iterator of window views (type WindowView)
+        """
         win_start = start
         win_end = start + self.size
         reads = deque()
@@ -33,19 +51,34 @@ class Window:
             yield WindowView(chrom,win_start,win_end,reads)
         
 class WindowView:
-
+    """
+    Snapshot view of the DNA methylation statuses of CpGs
+    in reads within a given region of the genome
+    """
     def __init__(self,chrom,start,end,reads):
+        """
+        arguments:
+        - chrom,start,end: genomic region of interest
+        - reads: list of reads in the region (type Read) 
+        """
         self.chrom = chrom
         self.start = start
         self.end = end
         self.reads = reads
 
-    def get_reads(self): 
+    def get_reads(self):
+        """
+        returns: The list of reads overlapping the genomic region
+        """
         return [read for read in self.reads
                 if read.get_end()>self.start
                 and read.get_start()<self.end]
 
     def __str__(self):
+        """
+        returns: text description of the DNA methylation statuses
+        of CpGs on the reads overlapping the genomic region
+        """
         reads = self.get_reads()
         meth = []
         positions = set()

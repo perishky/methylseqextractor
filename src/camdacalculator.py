@@ -4,14 +4,44 @@ from collections import deque
 from .methylseqdataset import MethylSeqDataset
 
 class CAMDACalculator:
-
+    """
+    Iterate through CpG sites in a genomic region 
+    and calculate the percentage of CpG sites in a window around the CpG site
+    are concurrence CpG sites (unmethylated CpG sites on reads with at least 
+    one methylated CpG site)
+    """
     def __init__(self,dataset,size,min_depth=10):
+        """
+        attributes:
+        - dataset: type MethylSeqDataset
+        - size: size of each window view in base-pairs
+        - min_depth: minimum number of reads covering the CpG site of interest
+        """
         assert isinstance(dataset, MethylSeqDataset)
         self.dataset = dataset
         self.window = CAMDAWindow(dataset,min_depth=min_depth)
         self.size = size
 
     def calculate(self,chrom,start=0,end=None):
+        """
+        attributes:
+        - chrom,start,end: genomic region of interest
+
+        returns: iterator of window views across the genomic region,
+          each centered at a CpG site, reporting the percentage of CpG sites
+          in the view are concurrence CpG sites.
+          A dictionary is returned for each view including the following:
+          - chrom,pos: genomic coordinates of the CpG site of interest
+          - chrom,start,end: genomic coordinates of the window view 
+          - depth: number of reads covering the CpG site
+          - nconcurrence: number of concurrence CpG sites in reads in the window view
+          - camda: percentage of CpG sites in the window that are concurrence sites
+          - nconcurrence_reads: number of reads with a concurrence CpG site
+          - unweighted: percentage of reads that are concurrence reads
+          - nmeth: number of methylated CpG sites in the view
+          - nunmeth: number of unmethylated CpG sites in the view
+          - meth_pct: percentage of CpG sites methylated in the view
+        """
         for column in self.window.slide(chrom,start,end):
             concurrence_cytosines = 0
             meth = 0
@@ -51,20 +81,27 @@ class CAMDACalculator:
             if number_clones > 0 and number_cytosines > 0: 
                 yield { 
                     "chrom": column.get_chrom(),
+                    "pos": column.get_pos(),
                     "start": region_start,
                     "end": region_end,
                     "depth": number_clones,
                     "nconcurrence": concurrence_cytosines,
                     "camda": concurrence_cytosines/float(number_cytosines),
-                    "nconcurrence_clones": concurrence_clones,
-                    "nmeth_clones": meth_clones,
+                    "nconcurrence_reads": concurrence_clones,
                     "unweighted":concurrence_clones/float(number_clones),
                     "nmeth": meth,
+                    "nunmeth": number_cytosines-meth,
                     "meth_pct": meth/float(number_cytosines)
                 }
 
 
 class CAMDAWindow:
+    """
+    Specialized window class for CAMDA calculations. 
+    It differs from the Window class by being centered a CpG site 
+    and its start and end coordinates change to contain
+    all reads overlapping the CpG site in the center.
+    """
     def __init__(self,dataset,min_depth=10):
         assert isinstance(dataset,MethylSeqDataset)
         self.dataset = dataset

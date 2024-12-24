@@ -4,27 +4,32 @@ from .read import Read
 
 class LevelCalculator:
     """
-    Iterates through CpG sites and calculates DNAm levels
-
-    Parameter
-    ---------
-    iterator: CytosineIterator
-    
-    Returns
-    -------
-    Dictionary for the current CpG site including:
-    - chromosome ('chromosome')
-    - chromosomal position ('pos')
-    - number of methylated cytosines ('meth')
-    - number of unmethylated cytosines ('unmeth')
-    - methylation level ('level')
+    Iterate through CpG sites and calculate their DNAm levels
     """
     def __init__(self,dataset,min_depth=10):
+        """
+        attributes:
+        - dataset: type MethylSeqDataset
+        - min_depth: minimum number of reads covering each reported CpG site
+        """
         assert isinstance(dataset,MethylSeqDataset)
         self.dataset = dataset
         self.min_depth = min_depth
         
     def calculate(self,chrom,start=0,end=None):
+        """
+        attributes:
+        - chrom,start,end: genomic region of interest
+
+        returns: iterator of CpG sites across the region 
+          and their DNA methylation levels. Sites covered by 
+          fewer than min_depth (see init function) are omitted.
+          A dictionary is returned for each CpG site including the following:
+          - chrom,pos,strand: genomic position of the CpG site
+          - nmeth: number of reads in which it is methylated
+          - nunmeth: number of reads in which it is unmethylated
+          - meth_pct: percentage of reads in which it is methylated
+        """
         iterator = self.dataset.methylation(chrom,start,end)
         for column in iterator:
             meth = 0
