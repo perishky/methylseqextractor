@@ -4,31 +4,32 @@ import pandas as pd
 from .methylseqdataset import MethylSeqDataset
 
 class Window:
-    def __init__(self,dataset,size):
+    def __init__(self,dataset,size,min_depth=10):
         assert isinstance(dataset,MethylSeqDataset)
         self.dataset = dataset
         self.size = size
+        self.min_depth = min_depth
 
     def slide(self,chrom,start=0,end=None):
-        reads = deque()
-        iterator = self.dataset.methylation(chrom,start,end)
         win_start = start
         win_end = start + self.size
-        for column in iterator:
-            if column.pos > win_end-1:
-                if len(reads) > 0:
+        reads = deque()
+        columns = self.dataset.methylation(chrom,start,end)
+        for column in columns:
+            if column.get_pos() > win_end-1:
+                if len(reads) >= self.min_depth:
                     yield WindowView(chrom,win_start,win_end,reads)
-                win_end = column.pos+1 
+                win_end = column.get_pos()+1 
                 win_start = win_end - self.size + 1
                 while len(reads) > 0:
-                    if reads[0].end < win_start+1:
-                        read = reads.popleft()
+                    if reads[0].get_end() < win_start+1:
+                        reads.popleft()
                     else:
                         break
-            for cread in column.values():
-                if cread.read.creads[0].pos > column.pos-1: 
+            for cread in column.get_creads():
+                if cread is cread.read.get_leftmost():
                     reads.append(cread.read)
-        if len(reads) > 0:
+        if len(reads) >= self.min_depth:
             yield WindowView(chrom,win_start,win_end,reads)
         
 class WindowView:
@@ -40,8 +41,9 @@ class WindowView:
         self.reads = reads
 
     def get_reads(self): 
-        return [read for read in self.reads \
-                if read.end > self.start and read.start < self.end]
+        return [read for read in self.reads
+                if read.get_end()>self.start
+                and read.get_start()<self.end]
 
     def __str__(self):
         reads = self.get_reads()
@@ -49,17 +51,17 @@ class WindowView:
         positions = set()
         for read in reads:
             for cread in read.get_creads(self.start,self.end):
-                positions.add(cread.pos)
+                positions.add(cread.get_pos())
         positions = list(positions)
         positions.sort()
         for read in reads:
             read_meth = [""]*len(positions)
             for cread in read.get_creads(self.start,self.end):
-                idx = positions.index(cread.pos)
+                idx = positions.index(cread.get_pos())
                 read_meth[idx] = "1" if cread.is_methylated else "0"
             meth += [read_meth]
         meth = pd.DataFrame(meth)
-        meth.insert(0,"read",[read.name for read in reads])
+        meth.insert(0,"read",[read.get_name() for read in reads])
         return (
             "chrom = " + self.chrom 
             + ":" + str(self.start) + "-" + str(self.end) 

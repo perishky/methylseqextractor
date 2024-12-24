@@ -66,15 +66,15 @@ Each step of this iterator will return the reads of a different CpG site.
 Here are the reads for the first CpG site. 
 
 ```{python}
-sites = next(iter)
-pd.DataFrame([site.get_dict() for site in sites.values()])
+site = next(iter)
+pd.DataFrame([cread.to_dict() for cread in site.get_creads()])
 ```
 
 And the second CpG site.
 
 ```{python}
-sites = next(iter)
-pd.DataFrame([site.get_dict() for site in sites.values()])
+site = next(iter)
+pd.DataFrame([cread.to_dict() for cread in site.get_creads()])
 ```
 
 ## Calculate DNA methylation levels
@@ -87,7 +87,7 @@ Here we calculate DNA methylation levels for each CpG site
 in the region chr1:1245000-1246000.
 
 ```{python}
-levels = LevelCalculator(dataset)
+levels = LevelCalculator(dataset,min_depth=10)
 iter = levels.calculate("chr1", 1245000, 1246000)
 pd.DataFrame([site for site in iter])
 ```
@@ -99,7 +99,7 @@ It is possible to prevent merging.
 
 ```{python}
 dataset_stranded = MethylSeqDataset(bamfn, fastafn, merge_strands=False)
-levels = LevelCalculator(dataset_stranded)
+levels = LevelCalculator(dataset_stranded,min_depth=5)
 iter = levels.calculate("chr1", 1245000, 1246000)
 pd.DataFrame([site for site in iter])
 ```
@@ -133,7 +133,7 @@ DNA fragment (corresponding to a read pair) to the other.
 ```{python}
 flips = ClonalFlipCounter(dataset,200)
 iter = flips.calculate("chr1", 1245000, 1246000)
-pd.DataFrame([ region for region in iter])
+pd.DataFrame([region for region in iter])
 ```
 
 ## Calculate CAMDA scores 
@@ -161,7 +161,7 @@ In the original CAMDA package, this is not an option and is always
 set to 1 (as below).
 
 ```{python}
-camda = CAMDACalculator(dataset, 1)
+camda = CAMDACalculator(dataset, 1, min_depth=10)
 iter = camda.calculate("chr1", 1245000, 1246000)
 pd.DataFrame([site for site in iter])
 ```

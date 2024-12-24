@@ -1,0 +1,235 @@
+---
+title: "Evaluating methylseqextractor"
+format:
+  html:
+    code-fold: false
+    toc: true
+    self-contained: true
+jupyter: python3
+---
+
+This document verifies that 
+'methylseqextractor' 
+[https://github.com/perishky/methylseqextractor](https://github.com/perishky/methylseqextractor) performing as expected.
+
+## Import methylseqextractor modules
+
+All necessary modules can be imported as follows:
+
+```{python}
+from methylseqextractor import (
+  Window,
+  MethylSeqDataset,
+  LevelCalculator,
+  ClonalFlipCounter,
+  ConcurrenceCalculator,
+  CAMDACalculator
+)
+
+import numpy as np
+import pandas as pd
+import time
+import matplotlib.pyplot as plt
+import os
+```
+
+## Scatterplot function for comparisons
+
+```{python}
+def scatterplot(xlab, x, ylab, y):
+    vmin = min(list(x)+list(y))
+    vmax = max(list(x)+list(y))
+    plt.scatter(x,y,alpha=0.1)
+    m, b = np.polyfit(x, y, 1)
+    plt.plot(x, m*x+b,color="red")
+    plt.plot([vmin,vmin],[vmax,vmax],color="gray")
+    plt.xlabel(xlab)
+    plt.ylabel(ylab)
+    plt.show()
+```
+
+## MethylSeqDataset
+
+```{python}
+project_dir = "/projects/MRC-IEU/research/projects/icep2/wp3/004/working/"
+data_dir = project_dir + "/results/epic/picard_results/"
+id = "24-24602486_S3"
+bamfn = data_dir + "Sorted_Bam_Files/"+id+"_sorted.bam"
+fastafn = "genome/hg19.fa"
+```
+
+```{python}
+dataset = MethylSeqDataset(bamfn, fastafn, merge_strands=True)
+chrom = "chr1"
+```
+
+## LevelCalculator vs MethylDackel
+
+```{python}
+filename = "my_levels.csv"
+if not os.path.exists(filename):
+    #start = time.process_time()
+    levels = LevelCalculator(dataset,min_depth=10)
+    iter = levels.calculate(chrom)
+    my_scores = pd.DataFrame([site for site in iter])
+    #elapsed_time = time.process_time() - start 
+    ## 50s
+    my_scores.to_csv(filename,index=False)
+else:
+    my_scores = pd.read_csv(filename)
+```
+
+```{python}
+scores = pd.read_csv(data_dir + "bedGraph/" + id + ".markdup_CpG.bedGraph",sep="\t",skiprows=1)
+scores.columns = ['chr','start','end','meth_pct','nmeth','nunmeth']
+scores = scores[scores['chr'] == chrom]
+scores['pos'] = scores['start']
+```
+
+```{python}
+scores = scores.merge(my_scores, how='inner', on='pos', suffixes=('','_my'))
+```
+
+```{python}
+scores[['meth_pct','meth_pct_my']].corr()
+```
+
+```{python}
+scatterplot(
+    "DNAm (MethylDackel)",scores['meth_pct'],
+    "DNAm (LevelCalculator)",100*scores['meth_pct_my'])
+```
+
+```{python}
+total = scores['nmeth'] + scores['nunmeth']
+my_total = scores['nmeth_my'] + scores['nunmeth_my']
+(total-my_total).quantile([0.1,0.25,0.5,0.75,0.9])
+```
+
+```{python}
+scatterplot(
+    "read depth (MethylDackel)",total,
+    "read depth (LevelCalculator)",my_total)
+```
+
+## Window vs LevelCalculator
+
+```{python}
+def sites_by_window(dataset,size,chrom,start=0,end=None):
+    window = Window(dataset,size,min_depth=10)
+    iter = window.slide(chrom,start,end)
+    for view in iter:
+        meth = {}
+        for read in view.get_reads():
+            for cread in read.get_creads(view.start,view.end):
+                if not cread.get_pos() in meth:
+                    meth[cread.get_pos()] = []
+                meth[cread.get_pos()] += [cread]
+        positions = list(meth.keys())
+        positions.sort()
+        for pos in positions:
+            nmeth = len([cread for cread in meth[pos] if cread.is_methylated])
+            yield {
+                "chrom": chrom,
+                "pos": pos,
+                "idx": positions.index(pos),
+                "window_start": view.start,
+                "window_end": view.end,
+                "nmeth": nmeth,
+                "nunmeth": len(meth[pos])-nmeth,
+                "meth_pct": nmeth/float(len(meth[pos]))
+            }
+filename = "window_levels.csv"
+if not os.path.exists(filename):
+    iter = sites_by_window(dataset,100,chrom)
+    window_scores = pd.DataFrame([site for site in iter])
+    window_scores.to_csv(filename,index=False)
+else:
+    window_scores = pd.read_csv(filename)
+```
+
+```{python}
+window_scores['idx'].value_counts()
+```
+
+```{python}
+for idx in range(10):
+    merged_scores = my_scores.merge(
+        window_scores[window_scores['idx'] == idx], 
+        how="inner",
+        on='pos',
+        suffixes=('','_window'))
+    scatterplot(
+        "DNAm (LevelCalculator)",merged_scores['meth_pct'],
+        "DNAm (Window "+str(idx)+")",merged_scores['meth_pct_window'])
+```
+
+## CAMDACalculator vs CAMDA package
+
+```{python}
+filename = "my_camda.csv"
+if not os.path.exists(filename):
+    camda = CAMDACalculator(dataset, 1,min_depth=10)
+    iter = camda.calculate(chrom)
+    my_scores = pd.DataFrame([site for site in iter])
+    my_scores = my_scores[['start','end','depth','nconcurrence','camda','meth_pct']]
+    my_scores.to_csv(filename,index=False)
+else:
+    my_scores = pd.read_csv(filename)
+```
+
+```{python}
+scores = pd.read_csv(data_dir + "CAMDA/"+id+"_CpG_CAMDA.tsv",sep="\t")
+scores = scores[scores.chr==chrom]
+scores = scores[scores['eff_CT_count'] >= 10]
+```
+
+Harmonize genomic coordinates
+
+```{python}
+scores['pos'] = scores['pos']-1
+my_scores['pos'] = my_scores['start']+1
+```
+
+```{python}
+scores = scores.merge(my_scores, how='inner', on='pos', suffixes=('','_my'))
+```
+
+```{python}
+scores[['ratio','camda']].corr()
+```
+
+```{python}
+scatterplot(
+    "CAMDA scores (CAMDA package)",scores['ratio'],
+    "CAMDA scores (CAMDACalculator)",scores['camda'])
+```
+
+
+```{python}
+scores[['ratio','camda']].quantile([0.1,0.25,0.5,0.75,0.9])
+```
+
+```{python}
+scores[['eff_CT_count','depth']].corr()
+```
+
+```{python}
+scatterplot(
+    "read depth (CAMDA package)",scores['eff_CT_count'],
+    "read depth (CAMDACalculator)",scores['depth'])
+```
+
+```{python}
+(scores['depth']-scores['eff_CT_count']).quantile([0.1,0.25,0.5,0.75,0.9])
+```
+
+```{python}
+(scores['ratio']-scores['camda']).quantile([0.1,0.25,0.5,0.75,0.9])
+```
+
+
+```{python}
+scores.query("ratio > camda + 0.1 and eff_CT_count > 100 and depth > 100")
+```
+

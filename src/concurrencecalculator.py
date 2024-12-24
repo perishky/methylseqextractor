@@ -3,9 +3,9 @@ from .window import Window
 
 class ConcurrenceCalculator:
 
-    def __init__(self,dataset,size):
+    def __init__(self,dataset,size,min_depth=10):
         assert isinstance(dataset,MethylSeqDataset)
-        self.window = Window(dataset,size)
+        self.window = Window(dataset,size,min_depth=min_depth)
 
     def calculate(self,chrom,start=0,end=None):
         for view in self.window.slide(chrom,start,end):

@@ -19,28 +19,27 @@ class LevelCalculator:
     - number of unmethylated cytosines ('unmeth')
     - methylation level ('level')
     """
-    def __init__(self,dataset):
+    def __init__(self,dataset,min_depth=10):
         assert isinstance(dataset,MethylSeqDataset)
         self.dataset = dataset
+        self.min_depth = min_depth
         
     def calculate(self,chrom,start=0,end=None):
         iterator = self.dataset.methylation(chrom,start,end)
         for column in iterator:
             meth = 0
             unmeth = 0
-            for cread in column.values():
+            for cread in column.get_creads():
                 if cread.is_methylated:
                     meth+=1
                 else:
                     unmeth+=1
-            if meth+unmeth > 0:
+            if meth+unmeth >= self.min_depth:
                 level = float(meth)/float(meth+unmeth)
-                strand = cread.read.strand
-                if self.dataset.merge_strands: strand = "*"
                 yield { 
-                    "chrom":cread.read.chrom, 
-                    "pos": cread.pos,
-                    "strand":strand,
+                    "chrom": column.get_chrom(), 
+                    "pos": column.get_pos(),
+                    "strand":column.get_strand(),
                     "nmeth":meth,
                     "nunmeth":unmeth,
                     "meth_pct":level
