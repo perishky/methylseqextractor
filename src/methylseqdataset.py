@@ -29,8 +29,8 @@ class MethylSeqDataset:
         - merge_strands: whether or not to merge matching CpG sites 
             on opposite strands (default: True)
         """
-        self.bamfile = pysam.AlignmentFile(bamfn,"rb")
-        self.fastafile = pysam.FastaFile(fastafn)
+        self.bamfn = bamfn
+        self.fastafn = fastafn
         self.min_mapq=min_mapq 
         self.min_read_quality=min_read_quality
         self.min_base_quality=min_base_quality
@@ -73,14 +73,16 @@ class MethylSeqDataset:
 
     def _methylation_stranded(self,chrom,start=0,end=None):
         reads = dict()
-        pileup = self.bamfile.pileup(chrom,start,end,ignore_overlaps=True)
+        bamfile = pysam.AlignmentFile(self.bamfn,"rb")
+        fastafile = pysam.FastaFile(self.fastafn)
+        pileup = bamfile.pileup(chrom,start,end,ignore_overlaps=True)
         for pysam_column in pileup:
             pos = pysam_column.reference_pos
             if pos < start: continue
             if not end is None and pos > end-1: break
-            if self.fastafile.fetch(chrom,pos,pos+2).upper() == "CG":
+            if fastafile.fetch(chrom,pos,pos+2).upper() == "CG":
                 strand = "+"
-            elif pos > 0 and self.fastafile.fetch(chrom,pos-1,pos+1).upper() == "CG":
+            elif pos > 0 and fastafile.fetch(chrom,pos-1,pos+1).upper() == "CG":
                 strand = "-"
             else:
                 continue
@@ -120,4 +122,5 @@ class MethylSeqDataset:
                 if reads[name].get_end() < pos+1:
                     del reads[name]
             yield column
-                
+        bamfile.close()
+        fastafile.close()
