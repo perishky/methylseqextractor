@@ -1,0 +1,8 @@
+[project]
+name = "methylseqextractor"
+version = "0.1.0"
+dependencies = [
+    "pysam",
+    "numpy",
+    "pandas"
+]

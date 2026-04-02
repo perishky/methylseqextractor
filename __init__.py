@@ -1,11 +1,11 @@
-from .methylseqdataset import MethylSeqDataset
-from .window import Window, WindowView
-from .levelcalculator import LevelCalculator
-from .clonalflipcounter import ClonalFlipCounter
-from .concurrencecalculator import ConcurrenceCalculator
-from .camdacalculator import CAMDACalculator
-from .entropycalculator import EntropyCalculator
-from .cytosineread import CytosineRead
-from .read import Read
-from .column import Column
-from .utils import Utils
+from .src.methylseqdataset import MethylSeqDataset
+from .src.window import Window, WindowView
+from .src.levelcalculator import LevelCalculator
+from .src.clonalflipcounter import ClonalFlipCounter
+from .src.concurrencecalculator import ConcurrenceCalculator
+from .src.camdacalculator import CAMDACalculator
+from .src.entropycalculator import EntropyCalculator
+from .src.cytosineread import CytosineRead
+from .src.read import Read
+from .src.column import Column
+from .src.utils import Utils
