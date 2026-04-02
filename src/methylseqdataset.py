@@ -68,8 +68,9 @@ class MethylSeqDataset:
                     yield previous_column
                     previous_column = None
             previous_column = column
-        if not previous_column is None and previous_column.get_pos() < end:
-            yield previous_column
+        if not previous_column is None:
+            if end is None or previous_column.get_pos() < end:
+                yield previous_column
 
     def _methylation_stranded(self,chrom,start=0,end=None):
         reads = dict()

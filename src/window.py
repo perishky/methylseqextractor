@@ -32,13 +32,20 @@ class Window:
         win_start = start
         win_end = start + self.size
         reads = deque()
+        positions = deque()
         columns = self.dataset.methylation(chrom,start,end)
         for column in columns:
+            positions.append(column.get_pos())
             if column.get_pos() > win_end-1:
                 if len(reads) >= self.min_depth:
-                    yield WindowView(chrom,win_start,win_end,reads)
+                    yield WindowView(chrom,win_start,win_end,reads,positions)
                 win_end = column.get_pos()+1 
                 win_start = win_end - self.size + 1
+                while len(positions) > 0:
+                    if positions[0] < win_start:
+                        positions.popleft()
+                    else:
+                        break
                 while len(reads) > 0:
                     if reads[0].get_end() < win_start+1:
                         reads.popleft()
@@ -48,14 +55,14 @@ class Window:
                 if cread is cread.read.get_leftmost():
                     reads.append(cread.read)
         if len(reads) >= self.min_depth:
-            yield WindowView(chrom,win_start,win_end,reads)
+            yield WindowView(chrom,win_start,win_end,reads,positions)
         
 class WindowView:
     """
     Snapshot view of the DNA methylation statuses of CpGs
     in reads within a given region of the genome
     """
-    def __init__(self,chrom,start,end,reads):
+    def __init__(self,chrom,start,end,reads,positions):
         """
         arguments:
         - chrom,start,end: genomic region of interest
@@ -65,6 +72,7 @@ class WindowView:
         self.start = start
         self.end = end
         self.reads = reads
+        self.positions = positions
 
     def get_reads(self):
         """
@@ -74,32 +82,40 @@ class WindowView:
                 if read.get_end()>self.start
                 and read.get_start()<self.end]
 
+    def get_grid(self):
+        """
+        returns: 2D list of DNA methylation statuses of CpGs on the reads 
+        overlapping the genomic region. Each row corresponds to a read and each 
+        column corresponds to a CpG site. The value is "1" if the CpG is methylated
+        in the read, "0" if it is unmethylated or "" if the read does not cover the CpG site.
+        """
+        grid = []
+        for read in self.reads:
+            read_meth = [""]*len(self.positions)
+            for cread in read.get_creads(self.start,self.end):
+                try:
+                    idx = self.positions.index(cread.get_pos())
+                except ValueError:
+                    print("Error: cread pos not in positions")
+                    print(self.positions)
+                    print(cread.get_pos())
+                    continue
+                read_meth[idx] = "1" if cread.is_methylated else "0"
+            grid += [read_meth]
+        return grid
+    
     def __str__(self):
         """
         returns: text description of the DNA methylation statuses
         of CpGs on the reads overlapping the genomic region
         """
-        reads = self.get_reads()
-        meth = []
-        positions = set()
-        for read in reads:
-            for cread in read.get_creads(self.start,self.end):
-                positions.add(cread.get_pos())
-        positions = list(positions)
-        positions.sort()
-        for read in reads:
-            read_meth = [""]*len(positions)
-            for cread in read.get_creads(self.start,self.end):
-                idx = positions.index(cread.get_pos())
-                read_meth[idx] = "1" if cread.is_methylated else "0"
-            meth += [read_meth]
-        meth = pd.DataFrame(meth)
-        meth.insert(0,"read",[read.get_name() for read in reads])
+        meth = pd.DataFrame(self.get_grid())
+        meth.insert(0,"read",[read.get_name() for read in self.reads])
         return (
             "chrom = " + self.chrom 
             + ":" + str(self.start) + "-" + str(self.end) 
             + "\npositions = \n " 
-            + "\n ".join([str(pos) for pos in positions])
+            + "\n ".join([str(pos) for pos in self.positions])
             + "\nmeth=\n" 
             +  meth.to_string(header=False,index=False))
         
