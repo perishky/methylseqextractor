@@ -1,11 +1,13 @@
 from .methylseqdataset import MethylSeqDataset
 from .window import Window
+import numpy as np
 
 class ClonalFlipCounter:
     """
     Iterate through window views of the genome of a given size 
     and calculate the percentage of times DNA methylation changes 
-    across the reads in each view.
+    across the reads in each view relative to the number
+    of possible changes.
     """
     def __init__(self,dataset,size,min_depth=10):
         """
@@ -27,9 +29,14 @@ class ClonalFlipCounter:
           the reads in the view. A dictionary is returned for each view including 
           the following:
           - chrom,start,end: genomic coordinates of the view
-          - nflips: number of times DNA methylation changed across the reads
-          - npossible: the maximum number of times DNAm could have changed
-          - flip_pct": nflips/npossible
+          - depth: number of reads in the view
+          - num: number of UM flips in the view reads
+          - nmu: number of MU flips in the view reads
+          - nmm: number of MM pairs in the view reads
+          - nuu: number of UU pairs in the view reads
+          - nflips: number of flips in the view reads (UM + MU)
+          - npossible: number of possible flips in the view reads = 2 x min(nmeth,nunmeth)
+          - flip_pct: percentage of flips in the view reads = nflips/npossible
           - nmeth: number of methylated CpG sites in the view
           - nunmeth: number of unmethylated CpG sites in the view
           - meth_pct: percentage of CpG sites methylated in the view
@@ -37,28 +44,43 @@ class ClonalFlipCounter:
         for view in self.window.slide(chrom,start,end):
             meth = 0
             unmeth = 0
-            possible = 0
-            flips = 0
-            for read in view.get_reads():
+            um_pairs = 0
+            mu_pairs = 0
+            mm_pairs = 0
+            uu_pairs = 0
+            reads = view.get_reads()
+            for read in reads:
                 prev_methylated = None
                 for cread in read.get_creads(view.start,view.end):
-                    if cread.is_methylated: 
-                        meth += 1
-                    else:
-                        unmeth += 1
                     if not prev_methylated is None:
-                        possible += 1
-                        if prev_methylated != cread.is_methylated:
-                            flips += 1
+                        if prev_methylated:
+                            if cread.is_methylated:
+                                mm_pairs += 1
+                                meth += 1
+                            else:
+                                mu_pairs += 1
+                                unmeth += 1
+                        else:
+                            if cread.is_methylated:
+                                um_pairs += 1
+                                meth += 1
+                            else:
+                                uu_pairs += 1
+                                unmeth += 1
                     prev_methylated = cread.is_methylated
             if possible > 0:
                 yield { 
                     "chrom": view.chrom,
                     "start": view.start,
                     "end": view.end,
-                    "nflips":flips, 
-                    "npossible":possible,
-                    "flip_pct": flips/float(possible),
+                    "depth": len(reads),
+                    "num": um_pairs,
+                    "nmu": mu_pairs,
+                    "nmm": mm_pairs,
+                    "nuu": uu_pairs,
+                    "nflips": um_pairs + mu_pairs,
+                    "npossible": np.min(meth,unmeth)*2,
+                    "flip_pct": float(um_pairs + mu_pairs)/float(np.min(meth,unmeth)*2),
                     "nmeth":meth,
                     "nunmeth":unmeth,
                     "meth_pct": float(meth)/float(meth+unmeth)
