@@ -51,23 +51,22 @@ class ClonalFlipCounter:
             for read in reads:
                 prev_methylated = None
                 for cread in read.get_creads(view.start,view.end):
+                    if cread.is_methylated:
+                        meth += 1
+                    else:
+                        unmeth += 1
                     if not prev_methylated is None:
                         if prev_methylated:
                             if cread.is_methylated:
                                 mm_pairs += 1
-                                meth += 1
                             else:
                                 mu_pairs += 1
-                                unmeth += 1
                         else:
                             if cread.is_methylated:
                                 um_pairs += 1
-                                meth += 1
                             else:
                                 uu_pairs += 1
-                                unmeth += 1
                     prev_methylated = cread.is_methylated
-            ## claculate min of int variables meth and unmeth
             possible = min(meth,unmeth)*2
             if possible > 0:
                 yield { 
