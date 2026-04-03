@@ -1,6 +1,5 @@
 from .methylseqdataset import MethylSeqDataset
 from .window import Window
-import numpy as np
 
 class ClonalFlipCounter:
     """
@@ -68,7 +67,8 @@ class ClonalFlipCounter:
                                 uu_pairs += 1
                                 unmeth += 1
                     prev_methylated = cread.is_methylated
-            possible = np.min(meth,unmeth)*2
+            ## claculate min of int variables meth and unmeth
+            possible = min(meth,unmeth)*2
             if possible > 0:
                 yield { 
                     "chrom": view.chrom,
