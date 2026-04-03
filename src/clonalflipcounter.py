@@ -68,6 +68,7 @@ class ClonalFlipCounter:
                                 uu_pairs += 1
                                 unmeth += 1
                     prev_methylated = cread.is_methylated
+            possible = np.min(meth,unmeth)*2
             if possible > 0:
                 yield { 
                     "chrom": view.chrom,
@@ -79,8 +80,8 @@ class ClonalFlipCounter:
                     "nmm": mm_pairs,
                     "nuu": uu_pairs,
                     "nflips": um_pairs + mu_pairs,
-                    "npossible": np.min(meth,unmeth)*2,
-                    "flip_pct": float(um_pairs + mu_pairs)/float(np.min(meth,unmeth)*2),
+                    "npossible": possible,
+                    "flip_pct": float(um_pairs + mu_pairs)/float(possible),
                     "nmeth":meth,
                     "nunmeth":unmeth,
                     "meth_pct": float(meth)/float(meth+unmeth)
